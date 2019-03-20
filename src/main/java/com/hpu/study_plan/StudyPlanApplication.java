@@ -1,4 +1,5 @@
-package study_plan.study_plan;
+package com.hpu.study_plan;
+
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
