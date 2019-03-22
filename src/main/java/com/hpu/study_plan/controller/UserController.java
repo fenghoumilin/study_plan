@@ -28,6 +28,7 @@ public class UserController {
         logger.info("进入注册页面");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("user/register");
+        modelAndView.addObject("nick", "小弱");
 
         return modelAndView;
     }
