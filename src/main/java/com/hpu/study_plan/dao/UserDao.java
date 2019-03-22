@@ -1,4 +1,13 @@
 package com.hpu.study_plan.dao;
 
-public class UserDao {
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
+@Component
+@Mapper
+public interface UserDao {
+    int insertUser(Map<String, Object> parameters);
+    int updatePassword(Map<String, Object> parameters);
 }
