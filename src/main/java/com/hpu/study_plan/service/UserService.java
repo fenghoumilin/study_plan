@@ -17,12 +17,10 @@ public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public boolean insertUser(String nick, String phoneNumber, String account, String password, int gender, String avatarPicUrl, String birthday) {
+    public boolean insertUser(String nick, String phoneNumber, int gender, String avatarPicUrl, String birthday) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("nick", nick);
         parameters.put("phoneNumber", phoneNumber);
-        parameters.put("account", account);
-        parameters.put("password", password);
         parameters.put("gender", gender);
         parameters.put("avatarPicUrl", avatarPicUrl);
         parameters.put("birthday", birthday);
@@ -37,23 +35,21 @@ public class UserService {
         return false;
     }
 
-    public boolean updatePassword(int uid, String password) {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("uid", uid);
-        parameters.put("password", password);
+    public boolean haveUser(String phoneNumber) {
 
         try {
-            int ans = userDao.updatePassword(parameters);
-            logger.info("ans = " + ans);
-            if (ans == 1) {
+            int res = userDao.getUserCount(phoneNumber);
+            if (res > 0) {
                 return true;
             }
         } catch (Exception e) {
-            logger.error("updatePassword error | paramaters = " + parameters, e);
+            logger.error("insertUser error | phoneNumber = " + phoneNumber, e);
         }
 
         return false;
     }
+
+
 
 
 }

@@ -9,5 +9,5 @@ import java.util.Map;
 @Mapper
 public interface UserDao {
     int insertUser(Map<String, Object> parameters);
-    int updatePassword(Map<String, Object> parameters);
+    int getUserCount(String phoneNumber);
 }

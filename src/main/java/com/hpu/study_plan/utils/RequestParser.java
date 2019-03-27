@@ -34,24 +34,4 @@ public class RequestParser {
 
         return returnNode;
     }
-
-    public static JsonNode getPostParameter(String parameterStr) {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode returnNode = mapper.createObjectNode();
-        try {
-            returnNode = mapper.readTree(parameterStr);
-        } catch (Exception e) {
-            logger.error("fail to parse parameter string to json object|" + parameterStr, e);
-        }
-
-        return returnNode;
-    }
-
-    public static String getIP(HttpServletRequest request) {
-        String realIp = request.getHeader("x-real-ip");
-        if (StringUtils.isEmpty(realIp)) {
-            realIp = request.getRemoteAddr();
-        }
-        return realIp;
-    }
 }
