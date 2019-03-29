@@ -109,15 +109,20 @@ public class UserController {
         String key = PHONE_CODE_PREFIX + ":" + phoneNumber;
         if (redisUtils.getPhoneCode(key).equals(code)) {
             if (!userService.haveUser(phoneNumber)) {
-                userService.insertUser("", phoneNumber, 0, "", "00-00-00 00:00:00");
+                if (!userService.insertUser("", phoneNumber, 0, "", "00-00-00")) {
+                    logger.info("数据库插入错误");
+                    modelAndView.addObject(ResponseUtils.putErrorModel(1012));
+                    modelAndView.setViewName("user/register");
+                    return modelAndView;
+                }
             }
             session.setAttribute(session.getId(), phoneNumber);
-            modelAndView.setViewName("success");
+            modelAndView.setViewName("index");
             return modelAndView;
         }
 
         logger.info("验证码错误");
-        modelAndView.addObject(ResponseUtils.putErrorModel(1012));
+        modelAndView.addObject(ResponseUtils.putErrorModel(1021));
         modelAndView.setViewName("user/register");
         return modelAndView;
     }
