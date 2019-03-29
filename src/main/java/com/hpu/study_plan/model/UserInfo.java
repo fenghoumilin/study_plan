@@ -1,8 +1,19 @@
 package com.hpu.study_plan.model;
 
 public class UserInfo {
+
+    private String nick;
     private String phoneNumber;
-    private String code;
+    private int gender;
+    private String avatarPicUrl;
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -12,19 +23,29 @@ public class UserInfo {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getCode() {
-        return code;
+    public int getGender() {
+        return gender;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
+
+    public String getAvatarPicUrl() {
+        return avatarPicUrl;
+    }
+
+    public void setAvatarPicUrl(String avatarPicUrl) {
+        this.avatarPicUrl = avatarPicUrl;
     }
 
     @Override
     public String toString() {
         return "UserInfo{" +
-                "phoneNumber='" + phoneNumber + '\'' +
-                ", code='" + code + '\'' +
+                "nick='" + nick + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", gender=" + gender +
+                ", avatarPicUrl='" + avatarPicUrl + '\'' +
                 '}';
     }
 }

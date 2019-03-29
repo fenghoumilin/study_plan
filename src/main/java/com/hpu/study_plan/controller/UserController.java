@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hpu.study_plan.model.ErrorModel;
-import com.hpu.study_plan.model.UserInfo;
+import com.hpu.study_plan.model.LoginInfo;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.*;
 import org.slf4j.Logger;
@@ -34,13 +34,13 @@ public class UserController {
     @Autowired
     RedisUtils redisUtils;
 
-    @RequestMapping(value="/registerUI", method= RequestMethod.GET)
+    @RequestMapping(value="/loginUI", method= RequestMethod.GET)
     public ModelAndView userRegisterUI() {
 
         logger.info("进入注册页面");
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("user/register");
-        modelAndView.addObject(new UserInfo());
+        modelAndView.setViewName("user/login");
+        modelAndView.addObject(new LoginInfo());
         modelAndView.addObject(new ErrorModel());
 
         return modelAndView;
@@ -89,20 +89,20 @@ public class UserController {
     }
 
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public ModelAndView userLogin(HttpServletRequest request, @ModelAttribute UserInfo userInfo) {
+    public ModelAndView userLogin(HttpServletRequest request, @ModelAttribute LoginInfo loginInfo) {
 
 
         logger.info("login start");
-        logger.info("userInfo = " + userInfo.toString());
+        logger.info("loginInfo = " + loginInfo.toString());
 
-        String phoneNumber = userInfo.getPhoneNumber();
-        String code = userInfo.getCode();
+        String phoneNumber = loginInfo.getPhoneNumber();
+        String code = loginInfo.getCode();
         logger.info("phone = " + phoneNumber + "|code = " + code);
 
         ModelAndView modelAndView = new ModelAndView();
         if (StringUtils.isEmpty(phoneNumber) || StringUtils.isEmpty(code)) {
             modelAndView.addObject(ResponseUtils.putErrorModel(1002));
-            modelAndView.setViewName("user/register");
+            modelAndView.setViewName("login");
             return modelAndView;
         }
         HttpSession session = request.getSession();
@@ -112,7 +112,7 @@ public class UserController {
                 if (!userService.insertUser("", phoneNumber, 0, "", "00-00-00")) {
                     logger.info("数据库插入错误");
                     modelAndView.addObject(ResponseUtils.putErrorModel(1012));
-                    modelAndView.setViewName("user/register");
+                    modelAndView.setViewName("login");
                     return modelAndView;
                 }
             }
@@ -123,7 +123,7 @@ public class UserController {
 
         logger.info("验证码错误");
         modelAndView.addObject(ResponseUtils.putErrorModel(1021));
-        modelAndView.setViewName("user/register");
+        modelAndView.setViewName("login");
         return modelAndView;
     }
 
