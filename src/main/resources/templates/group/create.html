@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>欢迎注册</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="text/html;charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="../../static/jquery/jquery-3.3.1.js" th:src="@{/jquery/jquery-3.3.1.js}"></script>
+    <link href="../../static/bootstrap/css/bootstrap-theme.min.css" th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <link href="../../static/bootstrap/css/bootstrap.min.css" th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <script src="../../static/bootstrap/js/bootstrap.min.js" th:src="@{/bootstrap/js/bootstrap.min.js}" ></script>
+    <script src="../../static/layer/layer.js" th:src="@{/layer/layer.js}" ></script>
+    <script src="../static/js/jquery.skippr.min.js" th:src="@{/js/jquery.skippr.min.js}"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="learn_view.html">嗨社区</a>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">首页</a></li>
+                <li><a href="learn_view.html">走着嗨</a></li>
+                <li><a href="learn_view.html">起来嗨</a></li>
+                <li><a href="learn_view.html">嗨玩意</a></li>
+                <li><a href="learn_view.html">嗨客说</a></li>
+                <li><a href="learn_view.html">嗨视角</a></li>
+                <!--<li class="dropdown">-->
+                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>-->
+                <!--<ul class="dropdown-menu">-->
+                <!--<li><a href="#">Action</a></li>-->
+                <!--<li><a href="#">Another action</a></li>-->
+                <!--<li><a href="#">Something else here</a></li>-->
+                <!--<li class="divider"></li>-->
+                <!--<li class="dropdown-header">Dropdown header</li>-->
+                <!--<li><a href="#">Separated link</a></li>-->
+                <!--<li><a href="#">One more separated link</a></li>-->
+                <!--</ul>-->
+                <!--</li>-->
+            </ul>
+            <form class="navbar-form navbar-left">
+                <input type="text" class="form-control col-lg-8" placeholder="搜索">
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/user/loginUI">登录</a></li>
+                <!--<li><a href="#">注册</a></li>-->
+                <!--<li class="dropdown">-->
+                <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>-->
+                <!--<ul class="dropdown-menu">-->
+                <!--<li><a href="#">Action</a></li>-->
+                <!--<li><a href="#">Another action</a></li>-->
+                <!--<li><a href="#">Something else here</a></li>-->
+                <!--<li class="divider"></li>-->
+                <!--<li><a href="#">Separated link</a></li>-->
+                <!--</ul>-->
+                <!--</li>-->
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <form action="#" th:action="@{/group/create}" th:object="${groupInfo}" method="post">
+                <div class="form-group">
+                    <label for="title">标题</label>
+                    <input type="text" class="form-control" id="title" th:field="*{title}">
+                </div>
+                <div class="form-group">
+                    <!--th:field="*{playerInfo.playerRole}" playerInfo表示球员实体,playerRole球员实体的属性,
+                    比如 playerRole获得的是2(1:对应前锋,2:中锋,3:后卫),那么就显示中锋,*代表所有的都会匹配显示-->
+                    <select th:field="*{tagId}">
+                        <!--playerRoleList后台获取到的集合
+                        th:each="playerRole:${playerRoleList}"  遍历的写法,相当于foreach,playerRole表示变量(实体),${playerRoleList}表示需要遍历的集合
+                        th:value="${playerRole.id}作为value值    ${playerRole.id}球员角色ID作为value值
+                        th:text="${playerRole.name}"            作为下拉框需要显示的内容
+                        th:each="playerRole:${playerRoleList}"-->
+                        <option th:each="tag:${tagList}"
+                                th:value="${tag.id}"
+                                th:text="${tag.name}"
+                        ></option>
+                    </select>
+                </div>
+                <textarea th:field="*{content}" class="form-control" rows="10"></textarea>
+                <button type="submit" class="btn btn-default">提交</button>
+                <p th:text="${errorModel.getMessage()}"></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

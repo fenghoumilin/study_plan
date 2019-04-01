@@ -2,10 +2,28 @@ package com.hpu.study_plan.model;
 
 public class UserInfo {
 
+    private int id;
     private String nick;
     private String phoneNumber;
     private int gender;
     private String avatarPicUrl;
+    private String birthday;
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNick() {
         return nick;
@@ -42,10 +60,12 @@ public class UserInfo {
     @Override
     public String toString() {
         return "UserInfo{" +
-                "nick='" + nick + '\'' +
+                "id=" + id +
+                ", nick='" + nick + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", gender=" + gender +
                 ", avatarPicUrl='" + avatarPicUrl + '\'' +
+                ", birthday='" + birthday + '\'' +
                 '}';
     }
 }

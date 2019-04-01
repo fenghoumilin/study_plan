@@ -6,10 +6,13 @@
 
 <mapper namespace="com.hpu.study_plan.dao.UserDao">
     <insert id="insertUser" parameterType="map">
-        INSERT INTO `user`(nick, phone_number, gender, avatar_pic_url, birthday, created_time)
-        VALUE (#{nick}, #{phoneNumber}, #{gender}, #{avatarPicUrl}, #{birthday}, NOW())
+        INSERT INTO `user`(nick, phone_number, gender, avatar_pic_url, birthday, created_time, update_time)
+        VALUE (#{nick}, #{phoneNumber}, #{gender}, #{avatarPicUrl}, #{birthday}, NOW(), NOW())
     </insert>
-    <select id="getUser" parameterType="string" resultType="int">
+    <select id="getUserCount" parameterType="string" resultType="int">
         SELECT COUNT(*) FROM `user` WHERE phone_number=#{phoneNumber}
+    </select>
+    <select id="getUserInfoByPhone" parameterType="string" resultType="userInfo">
+        SELECT id, nick, phone_number phoneNumber, gender, avatar_pic_url avatarPicUrl, birthday FROM `user` WHERE phone_number=#{phoneNumber}
     </select>
 </mapper>

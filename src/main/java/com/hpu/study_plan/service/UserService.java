@@ -1,10 +1,13 @@
 package com.hpu.study_plan.service;
 
 import com.hpu.study_plan.dao.UserDao;
+import com.hpu.study_plan.model.UserInfo;
+import com.hpu.study_plan.utils.PhoneNumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +52,19 @@ public class UserService {
         return false;
     }
 
+    public UserInfo getUserInfoByPhone(String phoneNumber) {
+        if (!PhoneNumberUtils.validatePhoneNumber(phoneNumber)) {
+            return null;
+        }
 
+        try {
+            return userDao.getUserInfoByPhone(phoneNumber);
+        } catch (Exception e) {
+            logger.error("getUserInfoByPhone error | phoneNumber = " + phoneNumber, e);
+        }
+
+        return null;
+    }
 
 
 }

@@ -100,7 +100,7 @@ public class UserController {
         logger.info("phone = " + phoneNumber + "|code = " + code);
 
         ModelAndView modelAndView = new ModelAndView();
-        if (StringUtils.isEmpty(phoneNumber) || StringUtils.isEmpty(code)) {
+        if (!PhoneNumberUtils.validatePhoneNumber(phoneNumber)) {
             modelAndView.addObject(ResponseUtils.putErrorModel(1002));
             modelAndView.setViewName("login");
             return modelAndView;
@@ -109,7 +109,7 @@ public class UserController {
         String key = PHONE_CODE_PREFIX + ":" + phoneNumber;
         if (redisUtils.getPhoneCode(key).equals(code)) {
             if (!userService.haveUser(phoneNumber)) {
-                if (!userService.insertUser("", phoneNumber, 0, "", "00-00-00")) {
+                if (!userService.insertUser("hello world", phoneNumber, 0, "", "2050-01-01")) {
                     logger.info("数据库插入错误");
                     modelAndView.addObject(ResponseUtils.putErrorModel(1012));
                     modelAndView.setViewName("login");
