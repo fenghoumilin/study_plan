@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -13,12 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class IntercpetorConfig implements WebMvcConfigurer {
+public class MyWebMvcConfigurer implements WebMvcConfigurer {
 
     @Autowired
     private LoginInterceptor loginInterceptor;
 
+    private static final String LOCAL_PATH = System.getProperty("user.home") + "/graduation_project/img";
 
+
+    //拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> patternList = new ArrayList<>();
@@ -26,5 +30,12 @@ public class IntercpetorConfig implements WebMvcConfigurer {
         patternList.add("/group/create");
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns(patternList);
+    }
+
+    //图片映射
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/img").addResourceLocations(LOCAL_PATH);
     }
 }
