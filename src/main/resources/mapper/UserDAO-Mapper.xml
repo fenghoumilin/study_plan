@@ -15,4 +15,7 @@
     <select id="getUserInfoByPhone" parameterType="string" resultType="userInfo">
         SELECT id, nick, phone_number phoneNumber, gender, avatar_pic_url avatarPicUrl, birthday FROM `user` WHERE phone_number=#{phoneNumber}
     </select>
+    <update id="updateUser" parameterType="map">
+        UPDATE `user` SET nick=#{nick}, gender=#{gender}, avatar_pic_url=#{avatarPicUrl}, birthday=#{birthday}, update_time=NOW()
+    </update>
 </mapper>

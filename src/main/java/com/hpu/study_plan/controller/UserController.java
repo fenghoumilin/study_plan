@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hpu.study_plan.model.ErrorModel;
 import com.hpu.study_plan.model.LoginInfo;
+import com.hpu.study_plan.model.UserInfo;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.*;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -134,6 +136,51 @@ public class UserController {
 
 
         return "";
+    }
+
+    @RequestMapping(value="/settingUI", method= RequestMethod.GET)
+    public ModelAndView userSettingUI(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+        logger.info("进入用户设置页面");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user/setting");
+        modelAndView.addObject(userInfo);
+        modelAndView.addObject(new ErrorModel());
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value="/setting", method= RequestMethod.POST, consumes="multipart/form-data")
+    public ModelAndView userSetting(HttpServletRequest request,
+                                    @ModelAttribute UserInfo userInfo,
+                                    @RequestParam("pic") MultipartFile file) {
+
+        logger.info("file = " + file);
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        ModelAndView modelAndView = new ModelAndView();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        if (phoneNumber.equals(userInfo.getPhoneNumber())) {
+            if (!userService.updateUser(userInfo.getNick(), userInfo.getGender(), userInfo.getAvatarPicUrl(), userInfo.getBirthday())) {
+                modelAndView.setViewName("/index");
+                modelAndView.addObject(userInfo);
+                modelAndView.addObject(ResponseUtils.putErrorModel(1012));
+                return modelAndView;
+            }
+            modelAndView.setViewName("/index");
+            modelAndView.addObject(userInfo);
+            modelAndView.addObject(new ErrorModel());
+            return modelAndView;
+        }
+
+        modelAndView.setViewName("user/login");
+        modelAndView.addObject(new LoginInfo());
+        modelAndView.addObject(ResponseUtils.putErrorModel(1031));
+        return modelAndView;
     }
 
 }

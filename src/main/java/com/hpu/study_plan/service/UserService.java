@@ -66,5 +66,21 @@ public class UserService {
         return null;
     }
 
+    public boolean updateUser(String nick, int gender, String avatarPicUrl, String birthday) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("nick", nick);
+        parameters.put("gender", gender);
+        parameters.put("avatarPicUrl", avatarPicUrl);
+        parameters.put("birthday", birthday);
+
+        try {
+            userDao.updateUser(parameters);
+            return true;
+        } catch (Exception e) {
+            logger.error("updateUser error | parameters = " + parameters);
+        }
+
+        return false;
+    }
 
 }

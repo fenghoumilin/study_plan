@@ -2,17 +2,15 @@
 <html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>欢迎注册</title>
+    <title>设置信息</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="text/html;charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="../../static/jquery/jquery-3.3.1.js" th:src="@{/jquery/jquery-3.3.1.js}"></script>
-    <link rel="stylesheet" href="../../static/css/bootstrap-fileinput.css" th:href="@{/css/bootstrap-fileinput.css}">
     <link href="../../static/bootstrap/css/bootstrap-theme.min.css" th:href="@{/bootstrap/css/bootstrap-theme.min.css}" rel="stylesheet"/>
     <link href="../../static/bootstrap/css/bootstrap.min.css" th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <script src="../../static/bootstrap/js/bootstrap.min.js" th:src="@{/bootstrap/js/bootstrap.min.js}" ></script>
     <script src="../../static/layer/layer.js" th:src="@{/layer/layer.js}" ></script>
-    <script src="../../static/js/bootstrap-fileinput.js" th:src="@{/js/bootstrap-fileinput.js}"></script>
 </head>
 
 <body>
@@ -20,7 +18,7 @@
 
 <div class="container">
     <div class="row">
-        <form action="#" th:action="@{/user/setting}" th:object="${userInfo}" method="post">
+        <form action="#" th:action="@{/user/setting}" th:object="${userInfo}" method="post" enctype="multipart/form-data">
             <input type="hidden" th:field="*{phoneNumber}">
             <input type="hidden" th:field="*{id}">
             <div class="form-group">
@@ -29,37 +27,17 @@
             </div>
             <div class="form-group">
                 <label for="nick">性别</label>
-                <select th:field="*{gender}" class="form-control">
-                    <option th:value="1" th:text="男"></option>
-                    <option th:value="2" th:text="女"></option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="nick">性别</label>
-                <select th:field="*{gender}">
-                    <option value=1 th:if="${userInfo.gender == 1}" th:selected="selected">男</option>
-                    <option value=2 th:if="${userInfo.gender == 2}" th:selected="selected">女</option>
-                </select>
+                <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="inlineRadio1" th:checked="${userInfo.gender== 1}" th:field="*{gender}" value="1"> 男
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" th:checked="${userInfo.gender== 2}" th:field="*{gender}" value="2"> 女
+                </label>
             </div>
 
-            <div class="form-group">
-                <div class="col-md-8">
-                    <div class="fileinput fileinput-new" data-provides="fileinput" id="uploadImageDiv">
-                        <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
-                            <img src="${companyInfo.image}" alt="" />
-                        </div>
-                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
-                        <div>
-                        <span class="btn default btn-file"> <span
-                                class="fileinput-new">选择图片</span> <span class="fileinput-exists">更改</span> <input type="file" name="uploadImage" id="uploadImage" /></span>
-                            <a href="#" class="btn default fileinput-exists" data-dismiss="fileinput">移除</a>
-                            <span>请选择1M以内图片</span>
-                        </div>
-                    </div>
-                    <div id="titleImageError" style="color: #a94442"></div>
-                </div>
-            </div>
-
+            <label>头像</label>
+            <input type="button" value="上传图片" onclick="pic.click()" class="btn_mouseout"/><br>
+            <p><input type="file" id="pic" name="pic" onchange="uploadPic(this);" style="display:none"/></p>
             <div class="form-group">
                 <label for="birthday">生日</label>
                 <input type="text" class="form-control" id="birthday" th:field="*{birthday}">
@@ -69,65 +47,6 @@
         </form>
     </div>
 </div>
-<script>
-    var url = '';
-    $("#uploadImage").fileupload({
-        url : ROOT + "/security/company/uploadFile",
-        dataType : 'json',
-        autoUpload : false,
-        acceptFileTypes : /(gif|jpe?g|png)$/i,
-        maxFileSize : 1000000, // 1 MB
-        imageMaxWidth : 100,
-        imageMaxHeight : 100,
-        messages : {
-            acceptFileTypes : '文件类型不匹配',
-            maxFileSize : '文件过大',
-            minFileSize : '文件过小'
-        }
-    }).on("fileuploadadd", function(e, data) {
-        // 当文件添加上去时候调用
-        $("#titleImageError").html("");
-        data.submit()
-    }).on("fileuploaddone", function(e, data) {
-        // 上传完成时调用
-        if (data.result.returnState == "ERROR") {
-            alert("上传失败")
-            return;
-        }
-        url = data.result.returnData.url;
-    });
-
-    function updateMsg() {
-        $.ajax({
-            url : ROOT + "/security/company/updateInfo",
-            data : {
-                id : $("#companyId").val(),
-                image : url,
-                companyName : $("#companyName").val(),
-                companySite : $("#companySite").val(),
-                companyLinker : $("#companyLinker").val(),
-                companyTel : $("#companyTel").val()
-            },
-            type : "post",
-            success : function(data) {
-                if (data.returnState == "OK") {
-                    layer.msg('操作成功', {
-                        icon : 6,
-                        shade : 0.01,
-                        offset : [ '57px', '1100px' ]
-                    });
-                    $table.bootstrapTable('refresh');
-                } else {
-                    layer.msg('操作失败', {
-                        icon : 5,
-                        shade : 0.01,
-                        offset : [ '90px', '900px' ]
-                    });
-                }
-            }
-        });
-    }
-</script>
 
 </body>
 </html>

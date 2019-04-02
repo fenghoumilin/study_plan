@@ -12,5 +12,6 @@ public interface UserDao {
     int insertUser(Map<String, Object> parameters);
     int getUserCount(String phoneNumber);
     UserInfo getUserInfoByPhone(String phoneNumber);
+    int updateUser(Map<String, Object> parameters);
 
 }
