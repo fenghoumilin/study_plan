@@ -35,9 +35,12 @@
                 </label>
             </div>
 
-            <label>头像</label>
-            <input type="button" value="上传图片" onclick="pic.click()" class="btn_mouseout"/><br>
-            <p><input type="file" id="pic" name="pic" onchange="uploadPic(this);" style="display:none"/></p>
+            <div class="form-group">
+                <label for="pic">头像</label>
+                <input type="file" id="pic" name="pic">
+                <p class="help-block">请上传jpg或者png头像且不超过1MB</p>
+            </div>
+
             <div class="form-group">
                 <label for="birthday">生日</label>
                 <input type="text" class="form-control" id="birthday" th:field="*{birthday}">

@@ -119,6 +119,7 @@ public class UserController {
                 }
             }
             session.setAttribute(session.getId(), phoneNumber);
+            modelAndView.addObject("userInfo", userService.getUserInfoByPhone(phoneNumber));
             modelAndView.setViewName("index");
             return modelAndView;
         }
@@ -160,11 +161,13 @@ public class UserController {
                                     @RequestParam("pic") MultipartFile file) {
 
         logger.info("file = " + file);
+
         HttpSession session = request.getSession();
         String sessionId = session.getId();
         ModelAndView modelAndView = new ModelAndView();
         String phoneNumber = (String) session.getAttribute(sessionId);
         if (phoneNumber.equals(userInfo.getPhoneNumber())) {
+            userInfo.setAvatarPicUrl(FileUtils.upload(file, "user/avatar"));
             if (!userService.updateUser(userInfo.getNick(), userInfo.getGender(), userInfo.getAvatarPicUrl(), userInfo.getBirthday())) {
                 modelAndView.setViewName("/index");
                 modelAndView.addObject(userInfo);

@@ -19,15 +19,16 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
-    private static final String LOCAL_PATH = System.getProperty("user.home") + "/graduation_project/img";
-
-
     //拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> patternList = new ArrayList<>();
         patternList.add("/group/createUI");
         patternList.add("/group/create");
+        patternList.add("/user/setting");
+        patternList.add("/user/settingUI");
+
+
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns(patternList);
     }
@@ -36,6 +37,5 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/").addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("/img").addResourceLocations(LOCAL_PATH);
     }
 }

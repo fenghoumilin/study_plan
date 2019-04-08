@@ -32,6 +32,7 @@ public class UploadController {
 
     private static final Logger logger = LoggerFactory.getLogger(UploadController.class);
     private static final String LOCAL_PATH = System.getProperty("user.home") + "/graduation_project/img/";
+
     @Autowired
     UploadService uploadService;
     @Autowired

@@ -33,16 +33,18 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="learn_view.html">嗨社区</a>
+                <a class="navbar-brand" href="learn_view.html">学习社区</a>
             </div>
             <div class="navbar-collapse collapse navbar-responsive-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">首页</a></li>
+                    <li class="active" th:if="${userInfo.getNick() == null}">
+                        <a href="#">首页</a>
+                    </li>
+                    <li class="active" th:if="${userInfo.getNick() != null}">
+                        <a href="#" th:text="${userInfo.getNick()}"></a>
+                    </li>
                     <li><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
                     <li><a href="/user/settingUI" th:href="@{/user/settingUI}">个人信息设置</a></li>
-                    <li><a href="learn_view.html">嗨玩意</a></li>
-                    <li><a href="learn_view.html">嗨客说</a></li>
-                    <li><a href="learn_view.html">嗨视角</a></li>
                     <!--<li class="dropdown">-->
                         <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>-->
                         <!--<ul class="dropdown-menu">-->
@@ -60,7 +62,15 @@
                     <input type="text" class="form-control col-lg-8" placeholder="搜索">
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/user/loginUI">登录</a></li>
+                    <li th:if="${userInfo.getAvatarPicUrl() == null}">
+                        <a href="/user/loginUI">登录</a>
+                    </li>
+                    <li th:if="${userInfo.getAvatarPicUrl() != null}">
+                        <a class="navbar-brand" href="#">
+                            <img style="size: auto" alt="Brand" src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
+                        </a>
+                    </li>
+
                     <!--<li><a href="#">注册</a></li>-->
                     <!--<li class="dropdown">-->
                         <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>-->
@@ -74,6 +84,7 @@
                     <!--</li>-->
                 </ul>
             </div>
+
         </nav>
 </header>
 <section id="container">
@@ -115,7 +126,7 @@
             <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="200">
                 <a href="index.html">
                     <div class="walkhi">
-                        <img src="../static/img/img2.jpg" class="img-responsive">
+                        <img src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" class="img-responsive">
                         <h4>走着嗨活动标题</h4>
                         <p>
                             2015-7-15
