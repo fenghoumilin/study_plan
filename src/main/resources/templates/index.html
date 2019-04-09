@@ -33,30 +33,19 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="learn_view.html">学习社区</a>
+                <a class="navbar-brand" href="/" th:href="@{/}">学习社区</a>
             </div>
             <div class="navbar-collapse collapse navbar-responsive-collapse">
                 <ul class="nav navbar-nav">
                     <li class="active" th:if="${userInfo.getNick() == null}">
-                        <a href="#">首页</a>
+                        <a href="#" th:href="@{/}">首页</a>
                     </li>
                     <li class="active" th:if="${userInfo.getNick() != null}">
-                        <a href="#" th:text="${userInfo.getNick()}"></a>
+                        <a href="#" th:href="@{/user/settingUI}" th:text="${userInfo.getNick()}"></a>
                     </li>
                     <li><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
+                    <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
                     <li><a href="/user/settingUI" th:href="@{/user/settingUI}">个人信息设置</a></li>
-                    <!--<li class="dropdown">-->
-                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>-->
-                        <!--<ul class="dropdown-menu">-->
-                            <!--<li><a href="#">Action</a></li>-->
-                            <!--<li><a href="#">Another action</a></li>-->
-                            <!--<li><a href="#">Something else here</a></li>-->
-                            <!--<li class="divider"></li>-->
-                            <!--<li class="dropdown-header">Dropdown header</li>-->
-                            <!--<li><a href="#">Separated link</a></li>-->
-                            <!--<li><a href="#">One more separated link</a></li>-->
-                        <!--</ul>-->
-                    <!--</li>-->
                 </ul>
                 <form class="navbar-form navbar-left">
                     <input type="text" class="form-control col-lg-8" placeholder="搜索">
@@ -70,21 +59,8 @@
                             <img style="size: auto" alt="Brand" src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
                         </a>
                     </li>
-
-                    <!--<li><a href="#">注册</a></li>-->
-                    <!--<li class="dropdown">-->
-                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>-->
-                        <!--<ul class="dropdown-menu">-->
-                            <!--<li><a href="#">Action</a></li>-->
-                            <!--<li><a href="#">Another action</a></li>-->
-                            <!--<li><a href="#">Something else here</a></li>-->
-                            <!--<li class="divider"></li>-->
-                            <!--<li><a href="#">Separated link</a></li>-->
-                        <!--</ul>-->
-                    <!--</li>-->
                 </ul>
             </div>
-
         </nav>
 </header>
 <section id="container">
@@ -449,7 +425,7 @@
         </div>
     </div>
     <div class="footerbot">
-        © 2015 嗨weiwork | 鲁ICP备12012936号
+        hpu
     </div>
 
 </footer>

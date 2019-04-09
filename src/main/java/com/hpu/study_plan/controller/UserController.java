@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     private static final String PHONE_CODE_PREFIX = GlobalPropertyUtils.get("redis.phone_code.key.prefix");
+    private static final String USER_AVATAR = GlobalPropertyUtils.get("img_type.user_avatar");
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -160,14 +161,17 @@ public class UserController {
                                     @ModelAttribute UserInfo userInfo,
                                     @RequestParam("pic") MultipartFile file) {
 
-        logger.info("file = " + file);
-
         HttpSession session = request.getSession();
         String sessionId = session.getId();
         ModelAndView modelAndView = new ModelAndView();
         String phoneNumber = (String) session.getAttribute(sessionId);
         if (phoneNumber.equals(userInfo.getPhoneNumber())) {
-            userInfo.setAvatarPicUrl(FileUtils.upload(file, "user/avatar"));
+            String uploadUrl = FileUtils.upload(file, USER_AVATAR);
+            if (StringUtils.isEmpty(uploadUrl)) {
+                modelAndView.addObject(userInfo);
+                modelAndView.addObject(ResponseUtils.putErrorModel(1032));
+            }
+            userInfo.setAvatarPicUrl(uploadUrl);
             if (!userService.updateUser(userInfo.getNick(), userInfo.getGender(), userInfo.getAvatarPicUrl(), userInfo.getBirthday())) {
                 modelAndView.setViewName("/index");
                 modelAndView.addObject(userInfo);

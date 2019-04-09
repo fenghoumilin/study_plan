@@ -1,6 +1,5 @@
 package com.hpu.study_plan.utils;
 
-import com.hpu.study_plan.controller.UploadController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,9 +11,10 @@ import java.io.File;
 public class FileUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+    private static final String USER_AVATAR = GlobalPropertyUtils.get("img_type.user_avatar");
     private static final String LOCAL_PATH = System.getProperty("user.home") + "/graduation_project/study_plan/src/main/resources/static/img/";
 
-    public static String upload(MultipartFile file, String path, String fileType){
+    public static String upload(MultipartFile file, String path, String fileType, String type){
 
         String url = FileUtils.getFileName(fileType);
         // 生成新的文件名
@@ -30,12 +30,14 @@ public class FileUtils {
             //保存文件
             logger.info("dest = " + dest);
             file.transferTo(dest);
-            BufferedImage bufferedImage = ImageIO.read(dest);
-            BufferedImage headImage = ImageUtils.narrowImage(bufferedImage, 80, 80);
-            //转化成圆
-            headImage = ImageUtils.transformCircular(headImage, 720);
-            ImageUtils.writeImage(headImage, fileType, realPath);
 
+            if (USER_AVATAR.equals(type)) {
+                BufferedImage bufferedImage = ImageIO.read(dest);
+                BufferedImage headImage = ImageUtils.narrowImage(bufferedImage, 80, 80);
+                //转化成圆
+                headImage = ImageUtils.transformCircular(headImage, 720);
+                ImageUtils.writeImage(headImage, fileType, realPath);
+            }
             return url;
         } catch (Exception e) {
             logger.error("upload error", e);
@@ -44,6 +46,9 @@ public class FileUtils {
     }
 
     public static String upload(MultipartFile file, String type) {
+        if (file.isEmpty()) {
+            return "";
+        }
         try {
             logger.info("type = " + type);
             long size = file.getSize();
@@ -55,7 +60,7 @@ public class FileUtils {
                 System.arraycopy(byteArray, 0, fileTypeByte, 0, fileTypeByte.length);
                 String fileType = CheckFileTypeUtils.getFileHeaderByByteArray(fileTypeByte);
                 if ("jpg".equals(fileType) || "png".equals(fileType)) {
-                    String url = upload(file, LOCAL_PATH + type, fileType);
+                    String url = upload(file, LOCAL_PATH + type, fileType, type);
                     logger.info("url = " + url);
                     return url;
                 }

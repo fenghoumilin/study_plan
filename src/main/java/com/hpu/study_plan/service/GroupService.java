@@ -1,6 +1,7 @@
 package com.hpu.study_plan.service;
 
 import com.hpu.study_plan.dao.GroupDao;
+import com.hpu.study_plan.model.GroupInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,15 @@ public class GroupService {
         }
 
         return false;
+    }
+
+    public List<GroupInfo> getGroupInfoList(int uid) {
+        try {
+            return groupDao.getGroupInfoList(uid);
+        } catch (Exception e) {
+            logger.error("insertGroup error | uid = " + uid, e);
+        }
+        return new ArrayList<>();
     }
 
 

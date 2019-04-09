@@ -66,7 +66,7 @@ public class UploadController {
                 System.arraycopy(byteArray, 0, fileTypeByte, 0, fileTypeByte.length);
                 String fileType = CheckFileTypeUtils.getFileHeaderByByteArray(fileTypeByte);
                 if ("jpg".equals(fileType) || "png".equals(fileType)) {
-                    String url = FileUtils.upload(file, LOCAL_PATH + type, fileType);
+                    String url = FileUtils.upload(file, LOCAL_PATH + type, fileType, type);
                     if (!StringUtils.isEmpty(url)) {
                         ObjectNode data = mapper.createObjectNode();
                         logger.info("url = " + url);

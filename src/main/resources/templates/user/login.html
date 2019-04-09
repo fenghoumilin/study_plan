@@ -29,7 +29,8 @@
                 <button type="button" id="verificationCode">获取验证码</button>
             </div>
             <button type="submit" class="btn btn-default">登录</button>
-            <p th:text="${errorModel.getMessage()}"></p>
+            <input onclick="history.go(-1)" type="button" value="返回">
+            <p th:if="${errorModel.getMessage() != ''}" th:text="${errorModel.getMessage()}"></p>
         </form>
     </div>
 </div>

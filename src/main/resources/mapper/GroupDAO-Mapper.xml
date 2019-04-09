@@ -11,6 +11,9 @@
     </select>
     <insert id="insertGroup" parameterType="map">
         INSERT INTO `group` (uid, title, content, pic_url, tag_id, created_time, update_time)
-        VALUE (#{uid}, #{title}, #{content}, #{pic_url}, #{tagId}, NOW(), NOW())
+        VALUE (#{uid}, #{title}, #{content}, #{pic_url}, #{tag_id}, NOW(), NOW())
     </insert>
+    <select id="getGroupInfoList" parameterType="int" resultType="com.hpu.study_plan.model.GroupInfo">
+        SELECT title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE uid=#{uid}
+    </select>
 </mapper>

@@ -54,7 +54,7 @@ public class UserService {
 
     public UserInfo getUserInfoByPhone(String phoneNumber) {
         if (!PhoneNumberUtils.validatePhoneNumber(phoneNumber)) {
-            return null;
+            return new UserInfo();
         }
 
         try {
@@ -63,7 +63,7 @@ public class UserService {
             logger.error("getUserInfoByPhone error | phoneNumber = " + phoneNumber, e);
         }
 
-        return null;
+        return new UserInfo();
     }
 
     public boolean updateUser(String nick, int gender, String avatarPicUrl, String birthday) {
