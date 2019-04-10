@@ -2,11 +2,10 @@ package com.hpu.study_plan.controller;
 
 import com.hpu.study_plan.dao.GroupDao;
 import com.hpu.study_plan.dao.UserDao;
-import com.hpu.study_plan.model.ErrorModel;
-import com.hpu.study_plan.model.GroupInfo;
-import com.hpu.study_plan.model.LoginInfo;
-import com.hpu.study_plan.model.UserInfo;
+import com.hpu.study_plan.model.*;
+import com.hpu.study_plan.service.ArticleService;
 import com.hpu.study_plan.service.GroupService;
+import com.hpu.study_plan.service.RecommendService;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.FileUtils;
 import com.hpu.study_plan.utils.GlobalPropertyUtils;
@@ -35,6 +34,10 @@ public class GroupController {
     UserService userService;
     @Autowired
     GroupService groupService;
+    @Autowired
+    ArticleService articleService;
+    @Autowired
+    RecommendService recommendService;
 
     @RequestMapping(value="/createUI", method= RequestMethod.GET)
     public ModelAndView groupCreateUI(HttpServletRequest request) {
@@ -89,14 +92,14 @@ public class GroupController {
             groupInfo.setPicUrl(uploadUrl);
             UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
             groupService.insertGroup(userInfo.getId(), groupInfo.getTitle(), groupInfo.getContent(), groupInfo.getPicUrl(), groupInfo.getTagId());
-            logger.info("userInfo = " + userInfo.toString());
-            logger.info("userInfo = " + groupInfo.toString());
+            /*logger.info("userInfo = " + userInfo.toString());
+            logger.info("groupInfo = " + groupInfo.toString());
             logger.info("返回社区列表");
             modelAndView.addObject("userInfo", userInfo);
             List<GroupInfo> groupInfoList = groupService.getGroupInfoList(userInfo.getId());
             logger.info("groupInfoList = " + groupInfoList);
-            modelAndView.addObject("groupInfoList", groupInfoList);
-            modelAndView.setViewName("group/list");
+            modelAndView.addObject("groupInfoList", groupInfoList);*/
+            modelAndView.setViewName("redirect:/group/list?uid=" + userInfo.getId());
             return modelAndView;
         } catch (Exception e) {
             logger.error("groupCreate error", e);
@@ -125,11 +128,55 @@ public class GroupController {
             logger.info("userInfo = " + userInfo.toString());
             logger.info("返回社区列表");
             modelAndView.addObject("userInfo", userInfo);
-            List<GroupInfo> groupInfoList = groupService.getGroupInfoList(uid);
+            List<GroupInfo> groupInfoList = groupService.getGroupInfoListByUid(uid);
             logger.info("groupInfoList = " + groupInfoList);
             logger.info("count = " + groupInfoList.size());
             modelAndView.addObject("groupInfoList", groupInfoList);
             modelAndView.setViewName("group/list");
+            return modelAndView;
+        } catch (Exception e) {
+            logger.error("groupCreate error", e);
+        }
+        return getGroupCreateMAV(phoneNumber, 1012);
+    }
+
+
+    @RequestMapping(value="/view", method= RequestMethod.GET)
+    public ModelAndView getGroupView(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        try {
+            int gid = Integer.parseInt(request.getParameter("gid"));
+            int page = 0;
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (Exception e) {
+                logger.error("getParameter(\"page\") error", e);
+            }
+
+            ModelAndView modelAndView = new ModelAndView();
+            List<ArticleResponse> articleInfoList = articleService.getArticlesByGid(gid, page);
+            logger.info("articleInfoList = " + articleInfoList);
+
+            logger.info("phoneNumber = " + phoneNumber);
+            UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+            if (userInfo == null) {
+                userInfo = new UserInfo();
+            }
+            List<GroupInfo> hotGroups = recommendService.getHotGroups();
+            List<ArticleResponse> hotArticles = recommendService.getHotArticles();
+            logger.info("hotArticles = " + hotArticles);
+            logger.info("hotGroups = " + hotGroups);
+            List<GroupInfo> groupInfoList = groupService.getGroupInfoListById(gid);
+            logger.info("groupInfoList = " + groupInfoList);
+            modelAndView.addObject("userInfo", userInfo);
+            modelAndView.addObject("groupInfo", groupInfoList.get(0));
+            modelAndView.addObject("hotGroups", hotGroups);
+            modelAndView.addObject("hotArticles", hotArticles);
+            modelAndView.addObject("articleInfoList", articleInfoList);
+            modelAndView.setViewName("group/view");
             return modelAndView;
         } catch (Exception e) {
             logger.error("groupCreate error", e);

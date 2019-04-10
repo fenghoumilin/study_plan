@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hpu.study_plan.dao.RecommendDao">
+
+    <select id="getHotGroups" resultType="com.hpu.study_plan.model.GroupInfo">
+        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` LIMIT 4
+    </select>
+    <select id="getHotArticles" resultType="com.hpu.study_plan.model.ArticleResponse">
+        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article LIMIT 4
+    </select>
+</mapper>

@@ -2,14 +2,31 @@ package com.hpu.study_plan.model;
 
 import java.util.Date;
 
-public class GroupInfo {
+public class ArticleResponse {
 
     int id;
+    int uid;
+    int gid;
     String title;
     String content;
     String picUrl;
-    int tagId;
     Date createdTime;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public int getGid() {
+        return gid;
+    }
+
+    public void setGid(int gid) {
+        this.gid = gid;
+    }
 
     public String getTitle() {
         return title;
@@ -27,21 +44,14 @@ public class GroupInfo {
         this.content = content;
     }
 
-    public int getTagId() {
-        return tagId;
+    public int getId() {
+        return id;
     }
 
-    public void setTagId(int tagId) {
-        this.tagId = tagId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
 
     public String getPicUrl() {
         return picUrl;
@@ -53,21 +63,22 @@ public class GroupInfo {
 
     @Override
     public String toString() {
-        return "GroupInfo{" +
+        return "ArticleResponse{" +
                 "id=" + id +
+                ", uid=" + uid +
+                ", gid=" + gid +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", picUrl='" + picUrl + '\'' +
-                ", tagId=" + tagId +
                 ", createdTime=" + createdTime +
                 '}';
     }
 
-    public int getId() {
-        return id;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 }

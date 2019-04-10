@@ -2,7 +2,7 @@
 <html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>欢迎注册</title>
+    <title>创建文章</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="text/html;charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -42,7 +42,7 @@
                 <li th:if="${userInfo.getNick() != null}">
                     <a href="#" th:href="@{/user/settingUI}" th:text="${userInfo.getNick()}"></a>
                 </li>
-                <li class="active"><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
+                <li><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
                 <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
                 <li><a href="/user/settingUI" th:href="@{/user/settingUI}">个人信息设置</a></li>
             </ul>
@@ -50,6 +50,7 @@
                 <input type="text" class="form-control col-lg-8" placeholder="搜索">
             </form>
             <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="/article/createUI" th:href="@{/article/createUI}">创建文章</a></li>
                 <li th:if="${userInfo.getAvatarPicUrl() == null}">
                     <a href="/user/loginUI">登录</a>
                 </li>
@@ -63,7 +64,7 @@
     </nav>
     <div class="container">
         <div class="row">
-            <form action="#" th:action="@{/group/create}" th:object="${groupInfo}" method="post" enctype="multipart/form-data">
+            <form action="#" th:action="@{/article/create}" th:object="${articleRequest}" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">标题</label>
                     <input type="text" class="form-control" id="title" th:field="*{title}">
@@ -76,15 +77,15 @@
                 <div class="form-group">
                     <!--th:field="*{playerInfo.playerRole}" playerInfo表示球员实体,playerRole球员实体的属性,
                     比如 playerRole获得的是2(1:对应前锋,2:中锋,3:后卫),那么就显示中锋,*代表所有的都会匹配显示-->
-                    <select th:field="*{tagId}">
+                    <select th:field="*{gid}">
                         <!--playerRoleList后台获取到的集合
                         th:each="playerRole:${playerRoleList}"  遍历的写法,相当于foreach,playerRole表示变量(实体),${playerRoleList}表示需要遍历的集合
                         th:value="${playerRole.id}作为value值    ${playerRole.id}球员角色ID作为value值
                         th:text="${playerRole.name}"            作为下拉框需要显示的内容
                         th:each="playerRole:${playerRoleList}"-->
-                        <option th:each="tag:${tagList}"
-                                th:value="${tag.id}"
-                                th:text="${tag.name}"
+                        <option th:each="group:${groupList}"
+                                th:value="${group.id}"
+                                th:text="${group.title}"
                         ></option>
                     </select>
                 </div>

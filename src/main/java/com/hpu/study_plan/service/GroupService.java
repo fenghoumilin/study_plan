@@ -49,12 +49,32 @@ public class GroupService {
         return false;
     }
 
-    public List<GroupInfo> getGroupInfoList(int uid) {
+    public List<GroupInfo> getGroupInfoListByUid(int uid) {
         try {
-            return groupDao.getGroupInfoList(uid);
+            return groupDao.getGroupInfoListByUid(uid);
         } catch (Exception e) {
-            logger.error("insertGroup error | uid = " + uid, e);
+            logger.error("getGroupInfoList error | uid = " + uid, e);
         }
+        return new ArrayList<>();
+    }
+
+    public List<GroupInfo> getGroupInfoListById(int id) {
+        try {
+            return groupDao.getGroupInfoListById(id);
+        } catch (Exception e) {
+            logger.error("getGroupInfoListById error | uid = " + id, e);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Map<String, Object>> getSimpleGroupList(int uid) {
+
+        try {
+            return groupDao.getSimpleGroupList(uid);
+        } catch (Exception e) {
+            logger.error("getSimpleGroupList error | uid = " + uid, e);
+        }
+
         return new ArrayList<>();
     }
 

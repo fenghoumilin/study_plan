@@ -26,42 +26,45 @@
 </head>
 <body>
 <header>
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/" th:href="@{/}">学习社区</a>
-            </div>
-            <div class="navbar-collapse collapse navbar-responsive-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active" th:if="${userInfo.getNick() == null}">
-                        <a href="#" th:href="@{/}">首页</a>
-                    </li>
-                    <li class="active" th:if="${userInfo.getNick() != null}">
-                        <a href="#" th:href="@{/user/settingUI}" th:text="${userInfo.getNick()}"></a>
-                    </li>
-                    <li><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
-                    <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
-                    <li><a href="/user/settingUI" th:href="@{/user/settingUI}">个人信息设置</a></li>
-                </ul>
-                <form class="navbar-form navbar-left">
-                    <input type="text" class="form-control col-lg-8" placeholder="搜索">
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-                    <li th:if="${userInfo.getAvatarPicUrl() == null}">
-                        <a href="/user/loginUI">登录</a>
-                    </li>
-                    <li th:if="${userInfo.getAvatarPicUrl() != null}">
-                        <a class="navbar-brand" href="#">
-                            <img style="size: auto" alt="Brand" src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/" th:href="@{/}">学习社区</a>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active" th:if="${userInfo.getNick() == null}">
+                    <a href="#" th:href="@{/}">首页</a>
+                </li>
+                <li class="active" th:if="${userInfo.getNick() != null}">
+                    <a href="#" th:href="@{/user/settingUI}" th:text="${userInfo.getNick()}"></a>
+                </li>
+                <li><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
+                <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
+                <li><a href="/user/settingUI" th:href="@{/user/settingUI}">个人信息设置</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <input type="text" class="form-control col-lg-8" placeholder="搜索">
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/article/createUI">写文章</a>
+                </li>
+                <li th:if="${userInfo.getAvatarPicUrl() == null}">
+                    <a href="/user/loginUI">登录</a>
+                </li>
+                <li th:if="${userInfo.getAvatarPicUrl() != null}">
+                    <a class="navbar-brand" href="#" th:href="@{/user/settingUI}">
+                        <img style="size: auto" alt="Brand" src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 </header>
 <section id="container">
         <div id="skippr">

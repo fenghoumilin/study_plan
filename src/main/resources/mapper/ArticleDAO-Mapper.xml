@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hpu.study_plan.dao.ArticleDao">
+
+    <insert id="insertArticle" useGeneratedKeys="true" keyProperty="id" parameterType="map">
+        INSERT INTO `article` (uid, gid, title, content, pic_url, created_time, update_time)
+        VALUE (#{uid}, #{gid}, #{title}, #{content}, #{pic_url}, NOW(), NOW())
+    </insert>
+    <select id="getArticleResponse" parameterType="int" resultType="com.hpu.study_plan.model.ArticleResponse">
+        SELECT uid, gid, title, content, pic_url, created_time createdTime FROM article WHERE id=#{id}
+    </select>
+    <select id="getArticlesByGid" parameterType="map" resultType="com.hpu.study_plan.model.ArticleResponse">
+        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article WHERE gid=#{gid} LIMIT #{start}, #{end}
+    </select>
+</mapper>
