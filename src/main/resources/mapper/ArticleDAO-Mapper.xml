@@ -19,4 +19,28 @@
     <select id="getArticlesByGid" parameterType="map" resultType="com.hpu.study_plan.model.ArticleResponse">
         SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article WHERE gid=#{gid} LIMIT #{start}, #{end}
     </select>
+    <insert id="insertArticleLike" parameterType="map">
+        INSERT INTO article_like(aid, uid, created_time)
+        VALUE(#{aid}, #{uid}, now())
+    </insert>
+    <insert id="insertArticleComment" parameterType="map">
+        INSERT INTO article_comment(aid, uid, link_uid, content, created_time)
+        VALUE(#{aid}, #{uid}, #{linkUid}, #{content}, now())
+    </insert>
+    <select id="getLikeCount" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM article_like WHERE aid=#{aid}
+    </select>
+    <select id="getArticleAction" parameterType="int" resultType="com.hpu.study_plan.model.ArticleAction">
+        SELECT SUM(un.commentCount) commentCount, SUM(un.likeCount) likeCount FROM (
+            SELECT 0 commentCount, COUNT(al.id) likeCount FROM article_like al WHERE al.aid=#{aid}
+            UNION
+            SELECT COUNT(ac.id) commentCount, 0 likeCount FROM article_comment ac WHERE ac.aid=#{aid}
+        ) un
+    </select>
+    <select id="getCommentInfoList" parameterType="int" resultType="com.hpu.study_plan.model.CommentInfo">
+        SELECT aid, uid, link_uid linkUid, content, nick authorName, avatar_pic_url authorAvatar FROM article_comment ac
+        INNER JOIN `user` u
+        ON ac.uid=u.id
+        WHERE ac.aid=#{aid} ORDER BY ac.id DESC
+    </select>
 </mapper>
