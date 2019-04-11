@@ -153,7 +153,7 @@ public class GroupController {
             try {
                 page = Integer.parseInt(request.getParameter("page"));
             } catch (Exception e) {
-                logger.error("getParameter(\"page\") error", e);
+                logger.error("page = 0");
             }
 
             ModelAndView modelAndView = new ModelAndView();

@@ -3,6 +3,7 @@ package com.hpu.study_plan.controller;
 import com.hpu.study_plan.model.*;
 import com.hpu.study_plan.service.ArticleService;
 import com.hpu.study_plan.service.GroupService;
+import com.hpu.study_plan.service.RecommendService;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.FileUtils;
 import com.hpu.study_plan.utils.GlobalPropertyUtils;
@@ -34,6 +35,8 @@ public class ArticleController {
     GroupService groupService;
     @Autowired
     ArticleService articleService;
+    @Autowired
+    RecommendService recommendService;
 
     @RequestMapping(value="/createUI", method= RequestMethod.GET)
     public ModelAndView articleCreateUI(HttpServletRequest request) {
@@ -108,16 +111,29 @@ public class ArticleController {
         String sessionId = session.getId();
         String phoneNumber = (String) session.getAttribute(sessionId);
         UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
-        int articleId = Integer.parseInt(request.getParameter("articleId"));
-
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("userInfo", userInfo);
-        ArticleResponse articleResponse = articleService.getArticleResponse(articleId);
+        try {
+            int articleId = Integer.parseInt(request.getParameter("articleId"));
 
-        List<GroupInfo> groupInfoListById = groupService.getGroupInfoListById(articleResponse.getGid());
-        modelAndView.addObject("groupInfo", groupInfoListById.get(0));
-        modelAndView.addObject("articleResponse", articleResponse);
-        modelAndView.setViewName("article/view");
+
+            modelAndView.addObject("userInfo", userInfo);
+            ArticleResponse articleResponse = articleService.getArticleResponse(articleId);
+            logger.info("articleResponse = " + articleResponse);
+
+            List<GroupInfo> groupInfoListById = groupService.getGroupInfoListById(articleResponse.getGid());
+            List<GroupInfo> hotGroups = recommendService.getHotGroups();
+            List<ArticleResponse> hotArticles = recommendService.getHotArticles();
+            modelAndView.addObject("hotGroups", hotGroups);
+            modelAndView.addObject("hotArticles", hotArticles);
+            modelAndView.addObject("groupInfo", groupInfoListById.get(0));
+            modelAndView.addObject("articleResponse", articleResponse);
+            modelAndView.setViewName("article/view");
+            return modelAndView;
+        } catch (NumberFormatException e) {
+            logger.error("articleView error ", e);
+        }
+        modelAndView.addObject("userInfo", userInfo);
+        modelAndView.setViewName("error");
         return modelAndView;
     }
 

@@ -11,7 +11,10 @@
         VALUE (#{uid}, #{gid}, #{title}, #{content}, #{pic_url}, NOW(), NOW())
     </insert>
     <select id="getArticleResponse" parameterType="int" resultType="com.hpu.study_plan.model.ArticleResponse">
-        SELECT uid, gid, title, content, pic_url, created_time createdTime FROM article WHERE id=#{id}
+        SELECT a.id id, uid, u.nick authorName, u.avatar_pic_url authorAvatar, gid, title, content, pic_url picUrl, a.created_time createdTime FROM article a
+        INNER JOIN `user` u
+        ON a.uid=u.id
+        WHERE a.id=#{id}
     </select>
     <select id="getArticlesByGid" parameterType="map" resultType="com.hpu.study_plan.model.ArticleResponse">
         SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article WHERE gid=#{gid} LIMIT #{start}, #{end}

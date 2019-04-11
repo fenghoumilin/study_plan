@@ -7,9 +7,11 @@ public class ArticleResponse {
     int id;
     int uid;
     int gid;
+    String authorName;
     String title;
     String content;
     String picUrl;
+    String authorAvatar;
     Date createdTime;
 
     public int getUid() {
@@ -61,15 +63,33 @@ public class ArticleResponse {
         this.picUrl = picUrl;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public String getAuthorAvatar() {
+        return authorAvatar;
+    }
+
+    public void setAuthorAvatar(String authorAvatar) {
+        this.authorAvatar = authorAvatar;
+    }
+
     @Override
     public String toString() {
         return "ArticleResponse{" +
                 "id=" + id +
                 ", uid=" + uid +
                 ", gid=" + gid +
+                ", authorName='" + authorName + '\'' +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", picUrl='" + picUrl + '\'' +
+                ", authorAvatar='" + authorAvatar + '\'' +
                 ", createdTime=" + createdTime +
                 '}';
     }

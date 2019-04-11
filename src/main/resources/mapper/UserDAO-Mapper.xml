@@ -18,4 +18,7 @@
     <update id="updateUser" parameterType="map">
         UPDATE `user` SET nick=#{nick}, gender=#{gender}, avatar_pic_url=#{avatarPicUrl}, birthday=#{birthday}, update_time=NOW()
     </update>
+    <select id="getUserNick" parameterType="int" resultType="string">
+        SELECT nick FROM `user` WHERE id=#{id}
+    </select>
 </mapper>
