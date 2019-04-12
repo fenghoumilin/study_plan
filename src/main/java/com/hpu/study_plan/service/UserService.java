@@ -66,6 +66,17 @@ public class UserService {
         return new UserInfo();
     }
 
+    public UserInfo getUserInfoById(int id) {
+
+        try {
+            return userDao.getUserInfoById(id);
+        } catch (Exception e) {
+            logger.error("getUserInfoById error | id = " + id, e);
+        }
+
+        return new UserInfo();
+    }
+
     public boolean updateUser(String nick, int gender, String avatarPicUrl, String birthday) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("nick", nick);

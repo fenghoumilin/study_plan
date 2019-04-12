@@ -21,4 +21,7 @@
     <select id="getUserNick" parameterType="int" resultType="string">
         SELECT nick FROM `user` WHERE id=#{id}
     </select>
+    <select id="getUserInfoById" parameterType="int" resultType="userInfo">
+        SELECT id, nick, phone_number phoneNumber, gender, avatar_pic_url avatarPicUrl, birthday FROM `user` WHERE id=#{id}
+    </select>
 </mapper>

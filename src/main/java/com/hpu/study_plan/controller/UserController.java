@@ -190,4 +190,24 @@ public class UserController {
         return modelAndView;
     }
 
+
+    @RequestMapping(value="/view", method= RequestMethod.GET)
+    public ModelAndView userView(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+        int showUid = Integer.parseInt(request.getParameter("uid"));
+        UserInfo showUserInfo = userService.getUserInfoById(showUid);
+        logger.info("进入用户页面");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user/view");
+        modelAndView.addObject("userInfo", userInfo);
+        modelAndView.addObject("showUserInfo", showUserInfo);
+        modelAndView.addObject(new ErrorModel());
+
+        return modelAndView;
+    }
+
 }
