@@ -49,11 +49,14 @@ public class GroupService {
         return false;
     }
 
-    public List<GroupInfo> getGroupInfoListByUid(int uid) {
+    public List<GroupInfo> getGroupInfoListByUid(int uid, int limit) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
+        parameters.put("limit", limit);
         try {
-            return groupDao.getGroupInfoListByUid(uid);
+            return groupDao.getGroupInfoListByUid(parameters);
         } catch (Exception e) {
-            logger.error("getGroupInfoList error | uid = " + uid, e);
+            logger.error("getGroupInfoListByUid error | uid = " + uid, e);
         }
         return new ArrayList<>();
     }

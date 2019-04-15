@@ -11,6 +11,6 @@ import java.util.Map;
 @Component
 @Mapper
 public interface RecommendDao {
-    List<GroupInfo> getHotGroups();
-    List<ArticleResponse> getHotArticles();
+    List<GroupInfo> getHotGroups(Map<String, Object> parameters);
+    List<ArticleResponse> getHotArticles(Map<String, Object> parameters);
 }

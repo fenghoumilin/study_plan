@@ -42,7 +42,7 @@
                     <a href="#" th:href="@{/}">首页</a>
                 </li>
                 <li th:if="${userInfo.getNick() != null}">
-                    <a href="#" th:href="@{/user/settingUI}" th:text="${userInfo.getNick()}"></a>
+                    <a href="#" th:href="@{/user/view(uid=${userInfo.getId()})}" th:text="${userInfo.getNick()}"></a>
                 </li>
                 <li><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
                 <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
@@ -52,11 +52,14 @@
                 <input type="text" class="form-control col-lg-8" placeholder="搜索">
             </form>
             <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/article/createUI">写文章</a>
+                </li>
                 <li th:if="${userInfo.getAvatarPicUrl() == null}">
                     <a href="/user/loginUI">登录</a>
                 </li>
                 <li th:if="${userInfo.getAvatarPicUrl() != null}">
-                    <a class="navbar-brand" href="#" th:href="@{/user/settingUI}">
+                    <a class="navbar-brand" href="#" th:href="@{/user/view(uid=${userInfo.getId()})}">
                         <img style="size: auto" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
                     </a>
                 </li>
@@ -145,7 +148,7 @@
                     <h1>热门社区</h1>
                     <div class="aside-top">
                         <th:block th:each="hotGroup:${hotGroups}">
-                            <a href="../article/view.html" th:href="@{/group/view(gid=${hotGroup.getId()})}"><img src="../../static/img/img1.jpg" th:src="@{'/img/group/pic/'+${hotGroup.getPicUrl()}}" style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px"><p th:text="${hotGroup.getTitle()}">2015应该学习的前端语言与框架</p></a>
+                            <a href="../article/view.html" th:href="@{/group/view(gid=${hotGroup.getId()})}"><img src="#" th:src="@{'/img/group/pic/'+${hotGroup.getPicUrl()}}" style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px"><p th:text="${hotGroup.getTitle()}">2015应该学习的前端语言与框架</p></a>
                         </th:block>
                     </div>
                 </div>
@@ -157,7 +160,7 @@
                     <h1>热门文章</h1>
                     <div class="aside-top">
                         <th:block th:each="hotArticle:${hotArticles}">
-                            <a href="../article/view.html" th:href="@{/article/view(articleId=${hotArticle.getId()})}"><img src="../../static/img/img1.jpg" th:src="@{'/img/article/pic/'+${hotArticle.getPicUrl()}}" style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px"> <p th:text="${hotArticle.getTitle()}">2015应该学习的前端语言与框架</p></a>
+                            <a href="#" th:href="@{/article/view(articleId=${hotArticle.getId()})}"><img src="../../static/img/img1.jpg" th:src="@{'/img/article/pic/'+${hotArticle.getPicUrl()}}" style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px"> <p th:text="${hotArticle.getTitle()}">2015应该学习的前端语言与框架</p></a>
                         </th:block>
                     </div>
                 </div>

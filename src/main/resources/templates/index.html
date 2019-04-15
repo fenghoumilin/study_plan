@@ -85,316 +85,82 @@
         <div class="page-header">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="pull-left">走着嗨</h1>
-                    <span class="pull-right"><a href="index.html">更多</a> </span>
+                    <h1 class="pull-left">热门圈子</h1>
+                    <span class="pull-right">努力</span>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="0">
-                <a href="index.html">
-                    <div class="walkhi">
-                        <img src="../static/img/img1.jpg" th:src="@{/img/img1.jpg}" class="img-responsive">
-                        <h4>图片路径映射测试</h4>
-                        <p>
-                            2015-7-15
-                        </p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="200">
-                <a href="index.html">
-                    <div class="walkhi">
-                        <img src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" class="img-responsive">
-                        <h4>走着嗨活动标题</h4>
-                        <p>
-                            2015-7-15
-                        </p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="400">
-                <a href="index.html">
-                    <div class="walkhi">
-                        <img src="../static/img/img3.jpg" class="img-responsive">
-                        <h4>走着嗨活动标题</h4>
-                        <p>
-                            2015-7-15
-                        </p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="uphi">
-    <div class="container">
-        <div class="uphi-header">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="pull-left">起来嗨</h1>
-                    <span class="pull-right"><a href="index.html">更多</a> </span>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-8 gallery-item animated" data-animation="bounceIn" data-delay="0">
-                <a href="index.html">
-                    <div class="gallery-item">
-                        <img src="../static/img/img4.jpg" class="img-responsive">
-                        <div class="img-caption">
-                            <h4>走着嗨活动标题</h4>
-                            <p>
+            <th:block th:each="hotGroup:${hotGroups}">
+                <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="0">
+                    <a href="#" th:href="@{/group/view(gid=${hotGroup.getId()})}">
+                        <div class="walkhi">
+                            <img src="../static/img/img1.jpg" th:src="@{'/img/group/pic/'+${hotGroup.getPicUrl()}}" class="img-responsive">
+                            <h4 th:text="${hotGroup.getTitle()}"></h4>
+                            <p th:text="${#dates.format(hotGroup.getCreatedTime(), 'yyyy-MM-dd')}">
                                 2015-7-15
                             </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="400">
-                <div class="col-sm-12" style="margin: 0px; padding: 0px;">
-                    <a href="index.html">
-                        <div class="gallery-item">
-                            <img src="../static/img/img1.jpg" class="img-responsive">
-                            <div class="img-caption">
-                                <h4>走着嗨活动标题</h4>
-                                <p>
-                                    2015-7-15
-                                </p>
-                            </div>
                         </div>
                     </a>
                 </div>
-                <div class="col-sm-12" style="margin: 0px; padding: 0px;">
-                    <a href="index.html">
-                        <div class="gallery-item">
-                            <img src="../static/img/img3.jpg" class="img-responsive">
-                            <div class="img-caption">
-                                <h4>走着嗨活动标题</h4>
-                                <p>
-                                    2015-7-15
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-            </div>
+            </th:block>
         </div>
     </div>
 </section>
-<section class="hithing">
-    <div class="container">
-        <div class="hithing-header">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="pull-left">嗨玩意</h1>
-                    <span class="pull-right"><a href="index.html">更多</a> </span>
-                </div>
-            </div>
-        </div>
-        <div class="row" style="padding:0px 15px;">
-            <div class="col-sm-8 clear-lr gallery-item animated" data-animation="bounceIn" data-delay="0">
-                <a href="index.html">
-                    <div class="gallery-item" style="height: 253px; overflow: hidden;">
-                        <img src="../static/img/img4.jpg" class="img-responsive">
-                        <div class="img-caption">
-                            <h4>走着嗨活动标题</h4>
-                            <p>
-                                2015-7-15
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-4 clear-lr animated" data-animation="bounceIn" data-delay="400">
-                <a href="index.html">
-                    <div class="gallery-item">
-                        <img src="../static/img/img1.jpg" class="img-responsive">
-                        <div class="img-caption">
-                            <h4>走着嗨活动标题</h4>
-                            <p>
-                                2015-7-15
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="row" style="padding:0px 15px;">
-            <div class="col-sm-3 clear-lr animated" data-animation="bounceIn" data-delay="400" style="margin: 0px;">
-                <a href="index.html">
-                    <div class="gallery-item" >
-                        <img src="../static/img/img1.jpg" class="img-responsive">
-                        <div class="img-caption">
-                            <h4>走着嗨活动标题</h4>
-                            <p>
-                                2015-7-15
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-3 clear-lr  animated" data-animation="bounceIn" data-delay="400" style="margin: 0px;">
-                <a href="index.html">
-                    <div class="gallery-item">
-                        <img src="../static/img/img2.jpg" class="img-responsive">
-                        <div class="img-caption">
-                            <h4>走着嗨活动标题</h4>
-                            <p>
-                                2015-7-15
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-3 clear-lr animated" data-animation="bounceIn" data-delay="400" style="margin: 0px;">
-                <a href="index.html">
-                    <div class="gallery-item">
-                        <img src="../static/img/img3.jpg" class="img-responsive">
-                        <div class="img-caption">
-                            <h4>走着嗨活动标题</h4>
-                            <p>
-                                2015-7-15
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-3 clear-lr animated" data-animation="bounceIn" data-delay="400" style="margin: 0px;">
-                <a href="index.html">
-                    <div class="gallery-item">
-                        <img src="../static/img/img4.jpg" class="img-responsive">
-                        <div class="img-caption">
-                            <h4>走着嗨活动标题</h4>
-                            <p>
-                                2015-7-15
-                            </p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="higuestsay">
-    <div class="container">
-        <div class="hgs-header">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1 class="pull-left">嗨客说</h1>
-                    <span class="pull-right"><a href="index.html">更多</a> </span>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-3 animated" data-animation="bounceIn" data-delay="0" style="text-align: center;">
-                <img src="../static/img/img3.jpg" >
-                <div class="hgs-content">
-                    <h4>
-                        这是标题或者嗨客名称
-                    </h4>
-                    <p>
-                        这里是嗨客说的话，可以是很多，或者是嗨客的座右铭。可以很长很长很长很长
 
-                    </p>
-                    <p style="text-align: right;">---签名</p>
-
-                </div>
-            </div>
-            <div class="col-sm-3 animated" data-animation="bounceIn" data-delay="200"  style="text-align: center;">
-                <img src="../static/img/img2.jpg" >
-                <div class="hgs-content">
-                    <h4>
-                        这是标题或者嗨客名称
-                    </h4>
-                    <p>
-                        这里是嗨客说的话，可以是很多，或者是嗨客的座右铭。可以很长很长很长很长
-
-                    </p>
-                    <p style="text-align: right;">---签名</p>
-
-                </div>
-            </div>
-            <div class="col-sm-3 animated" data-animation="bounceIn" data-delay="400" style="text-align: center;">
-                <img src="../static/img/img1.jpg" >
-                <div class="hgs-content">
-                    <h4>
-                        这是标题或者嗨客名称
-                    </h4>
-                    <p>
-                        这里是嗨客说的话，可以是很多，或者是嗨客的座右铭。可以很长很长很长很长
-
-                    </p>
-                    <p style="text-align: right;">---签名</p>
-
-                </div>
-            </div>
-            <div class="col-sm-3 animated" data-animation="bounceIn" data-delay="600" style="text-align: center;">
-                <img src="../static/img/img4.jpg" >
-                <div class="hgs-content">
-                    <h4>
-                        这是标题或者嗨客名称
-                    </h4>
-                    <p>
-                        这里是嗨客说的话，可以是很多，或者是嗨客的座右铭。可以很长很长很长很长
-
-                    </p>
-                    <p style="text-align: right;">---签名</p>
-
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
 <section class="hiview">
     <div class="container">
         <div class="hiview-header">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="pull-left">嗨视角</h1>
-                    <span class="pull-right"><a href="index.html">更多</a> </span>
+                    <h1 class="pull-left">热门文章</h1>
+                    <span class="pull-right">奋斗</span>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="0">
-                <a href="index.html">
-                    <div class="walkhi2">
-                        <img src="../static/img/img1.jpg" class="img-responsive">
-                        <h4>走着嗨活动标题</h4>
-                        <p>
-                            2015-7-15
-                        </p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="200">
-                <a href="index.html">
-                    <div class="walkhi2">
-                        <img src="../static/img/img2.jpg" class="img-responsive">
-                        <h4>走着嗨活动标题</h4>
-                        <p>
-                            2015-7-15
-                        </p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="400">
-                <a href="index.html">
-                    <div class="walkhi2">
-                        <img src="../static/img/img3.jpg" class="img-responsive">
-                        <h4>走着嗨活动标题</h4>
-                        <p>
-                            2015-7-15
-                        </p>
-                    </div>
-                </a>
-            </div>
+            <th:block th:each="hotArticle:${hotArticles}">
+                <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="0">
+                    <a href="#" th:href="@{/article/view(articleId=${hotArticle.getId()})}">
+                        <div class="walkhi2">
+                            <img src="#" th:src="@{'/img/article/pic/'+${hotArticle.getPicUrl()}}" class="img-responsive">
+                            <h4 th:text="${hotArticle.getTitle()}">走着嗨活动标题</h4>
+                            <p th:text="${#dates.format(hotArticle.getCreatedTime(), 'yyyy-MM-dd')}">
+                                2015-7-15
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </th:block>
         </div>
     </div>
-
+</section>
+<section style="background-color: #f7f7f7;padding: 0px 0px 30px 0px;">
+    <div class="container">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="pull-left">为你推荐</h1>
+                    <span class="pull-right">学习</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <th:block th:each="hotGroup:${hotGroups}">
+                <div class="col-sm-4 animated" data-animation="bounceIn" data-delay="0">
+                    <a href="#" th:href="@{/group/view(gid=${hotGroup.getId()})}">
+                        <div class="walkhi">
+                            <img src="../static/img/img1.jpg" th:src="@{'/img/group/pic/'+${hotGroup.getPicUrl()}}" class="img-responsive">
+                            <h4 th:text="${hotGroup.getTitle()}"></h4>
+                            <p th:text="${#dates.format(hotGroup.getCreatedTime(), 'yyyy-MM-dd')}">
+                                2015-7-15
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </th:block>
+        </div>
+    </div>
 </section>
 
 <footer class="hi-footer">

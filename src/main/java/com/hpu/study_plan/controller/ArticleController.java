@@ -9,12 +9,10 @@ import com.hpu.study_plan.service.RecommendService;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.FileUtils;
 import com.hpu.study_plan.utils.GlobalPropertyUtils;
-import com.hpu.study_plan.utils.PhoneNumberUtils;
 import com.hpu.study_plan.utils.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -125,8 +123,8 @@ public class ArticleController {
             logger.info("articleResponse = " + articleResponse);
 
             List<GroupInfo> groupInfoListById = groupService.getGroupInfoListById(articleResponse.getGid());
-            List<GroupInfo> hotGroups = recommendService.getHotGroups();
-            List<ArticleResponse> hotArticles = recommendService.getHotArticles();
+            List<GroupInfo> hotGroups = recommendService.getHotGroups(4);
+            List<ArticleResponse> hotArticles = recommendService.getHotArticles(4);
             ArticleAction articleAction = articleService.getArticleAction(articleId);
             CommentInfo commentInfo = new CommentInfo(articleId, userInfo.getId(), articleResponse.getUid());
             logger.info("articleAction = " + articleAction);

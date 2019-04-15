@@ -43,4 +43,7 @@
         ON ac.uid=u.id
         WHERE ac.aid=#{aid} ORDER BY ac.id DESC
     </select>
+    <select id="getArticlesByUid" parameterType="map" resultType="com.hpu.study_plan.model.ArticleResponse">
+        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article WHERE uid=#{uid} LIMIT 0, #{limit}
+    </select>
 </mapper>

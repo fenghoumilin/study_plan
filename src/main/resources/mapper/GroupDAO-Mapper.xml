@@ -13,8 +13,9 @@
         INSERT INTO `group` (uid, title, content, pic_url, tag_id, created_time, update_time)
         VALUE (#{uid}, #{title}, #{content}, #{pic_url}, #{tag_id}, NOW(), NOW())
     </insert>
-    <select id="getGroupInfoListByUid" parameterType="int" resultType="com.hpu.study_plan.model.GroupInfo">
+    <select id="getGroupInfoListByUid" parameterType="map" resultType="com.hpu.study_plan.model.GroupInfo">
         SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE uid=#{uid}
+        ORDER BY id DESC LIMIT 0, #{limit}
     </select>
     <select id="getGroupInfoListById" parameterType="int" resultType="com.hpu.study_plan.model.GroupInfo">
         SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE id=#{id}

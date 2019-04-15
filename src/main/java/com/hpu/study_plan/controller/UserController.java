@@ -3,9 +3,9 @@ package com.hpu.study_plan.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hpu.study_plan.model.ErrorModel;
-import com.hpu.study_plan.model.LoginInfo;
-import com.hpu.study_plan.model.UserInfo;
+import com.hpu.study_plan.model.*;
+import com.hpu.study_plan.service.ArticleService;
+import com.hpu.study_plan.service.GroupService;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.*;
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RequestMapping("/user")
 @Controller
@@ -33,17 +34,26 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    GroupService groupService;
+    @Autowired
+    ArticleService articleService;
 
     @Autowired
     RedisUtils redisUtils;
 
     @RequestMapping(value="/loginUI", method= RequestMethod.GET)
-    public ModelAndView userRegisterUI() {
+    public ModelAndView userRegisterUI(HttpServletRequest request) {
 
         logger.info("进入注册页面");
         ModelAndView modelAndView = new ModelAndView();
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
         modelAndView.setViewName("user/login");
         modelAndView.addObject(new LoginInfo());
+        modelAndView.addObject(userInfo);
         modelAndView.addObject(new ErrorModel());
 
         return modelAndView;
@@ -105,7 +115,7 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         if (!PhoneNumberUtils.validatePhoneNumber(phoneNumber)) {
             modelAndView.addObject(ResponseUtils.putErrorModel(1002));
-            modelAndView.setViewName("login");
+            modelAndView.setViewName("user/login");
             return modelAndView;
         }
         HttpSession session = request.getSession();
@@ -115,7 +125,7 @@ public class UserController {
                 if (!userService.insertUser("hello world", phoneNumber, 0, "", "2050-01-01")) {
                     logger.info("数据库插入错误");
                     modelAndView.addObject(ResponseUtils.putErrorModel(1012));
-                    modelAndView.setViewName("login");
+                    modelAndView.setViewName("user/login");
                     return modelAndView;
                 }
             }
@@ -127,7 +137,7 @@ public class UserController {
 
         logger.info("验证码错误");
         modelAndView.addObject(ResponseUtils.putErrorModel(1021));
-        modelAndView.setViewName("login");
+        modelAndView.setViewName("user/login");
         return modelAndView;
     }
 
@@ -200,11 +210,16 @@ public class UserController {
         UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
         int showUid = Integer.parseInt(request.getParameter("uid"));
         UserInfo showUserInfo = userService.getUserInfoById(showUid);
+        List<GroupInfo> groupInfoList = groupService.getGroupInfoListByUid(showUid, 3);
+        List<ArticleResponse> articleList = articleService.getArticlesByUid(showUid, 3);
         logger.info("进入用户页面");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("user/view");
         modelAndView.addObject("userInfo", userInfo);
         modelAndView.addObject("showUserInfo", showUserInfo);
+        modelAndView.addObject("groupInfoList", groupInfoList);
+        modelAndView.addObject("articleList", articleList);
+
         modelAndView.addObject(new ErrorModel());
 
         return modelAndView;

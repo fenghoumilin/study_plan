@@ -1,6 +1,9 @@
 package com.hpu.study_plan.controller;
 
+import com.hpu.study_plan.model.ArticleResponse;
+import com.hpu.study_plan.model.GroupInfo;
 import com.hpu.study_plan.model.UserInfo;
+import com.hpu.study_plan.service.RecommendService;
 import com.hpu.study_plan.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 public class IndexController {
@@ -21,6 +25,8 @@ public class IndexController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    RecommendService recommendService;
 
     @RequestMapping(value="/", method= RequestMethod.GET)
     public ModelAndView indexUI(HttpServletRequest request) {
@@ -40,6 +46,11 @@ public class IndexController {
             userInfo = new UserInfo();
         }
 
+        List<GroupInfo> hotGroups = recommendService.getHotGroups(3);
+        List<ArticleResponse> hotArticles = recommendService.getHotArticles(5);
+
+        modelAndView.addObject("hotGroups", hotGroups);
+        modelAndView.addObject("hotArticles", hotArticles);
         modelAndView.addObject(userInfo);
         modelAndView.setViewName("index");
 

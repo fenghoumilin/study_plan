@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RecommendService {
@@ -19,19 +21,22 @@ public class RecommendService {
     @Autowired
     RecommendDao recommendDao;
 
-    public List<GroupInfo> getHotGroups() {
+    public List<GroupInfo> getHotGroups(int limit) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("limit", limit);
         try {
-            return recommendDao.getHotGroups();
+            return recommendDao.getHotGroups(parameters);
         } catch (Exception e) {
             logger.error("getHotGroups error", e);
         }
         return new ArrayList<>();
     }
 
-    public List<ArticleResponse> getHotArticles() {
-
+    public List<ArticleResponse> getHotArticles(int limit) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("limit", limit);
         try {
-            return recommendDao.getHotArticles();
+            return recommendDao.getHotArticles(parameters);
         } catch (Exception e) {
             logger.error("getHotArticles error", e);
         }

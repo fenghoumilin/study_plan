@@ -128,7 +128,7 @@ public class GroupController {
             logger.info("userInfo = " + userInfo.toString());
             logger.info("返回社区列表");
             modelAndView.addObject("userInfo", userInfo);
-            List<GroupInfo> groupInfoList = groupService.getGroupInfoListByUid(uid);
+            List<GroupInfo> groupInfoList = groupService.getGroupInfoListByUid(uid, Integer.MAX_VALUE-1);
             logger.info("groupInfoList = " + groupInfoList);
             logger.info("count = " + groupInfoList.size());
             modelAndView.addObject("groupInfoList", groupInfoList);
@@ -165,8 +165,8 @@ public class GroupController {
             if (userInfo == null) {
                 userInfo = new UserInfo();
             }
-            List<GroupInfo> hotGroups = recommendService.getHotGroups();
-            List<ArticleResponse> hotArticles = recommendService.getHotArticles();
+            List<GroupInfo> hotGroups = recommendService.getHotGroups(4);
+            List<ArticleResponse> hotArticles = recommendService.getHotArticles(4);
             logger.info("hotArticles = " + hotArticles);
             logger.info("hotGroups = " + hotGroups);
             List<GroupInfo> groupInfoList = groupService.getGroupInfoListById(gid);

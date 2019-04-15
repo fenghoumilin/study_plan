@@ -7,9 +7,9 @@
 <mapper namespace="com.hpu.study_plan.dao.RecommendDao">
 
     <select id="getHotGroups" resultType="com.hpu.study_plan.model.GroupInfo">
-        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` LIMIT 4
+        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` LIMIT #{limit}
     </select>
     <select id="getHotArticles" resultType="com.hpu.study_plan.model.ArticleResponse">
-        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article LIMIT 4
+        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article LIMIT #{limit}
     </select>
 </mapper>

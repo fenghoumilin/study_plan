@@ -21,4 +21,5 @@ public interface ArticleDao {
     ArticleAction getArticleAction(int aid);
     int insertArticleComment(Map<String, Object> parameters);
     List<CommentInfo> getCommentInfoList(int aid);
+    List<ArticleResponse> getArticlesByUid(Map<String, Object> parameters);
 }

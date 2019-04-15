@@ -14,6 +14,4 @@ public interface UserDao {
     UserInfo getUserInfoByPhone(String phoneNumber);
     UserInfo getUserInfoById(int id);
     int updateUser(Map<String, Object> parameters);
-    String getUserNick(int id);
-
 }

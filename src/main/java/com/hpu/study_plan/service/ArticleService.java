@@ -139,4 +139,16 @@ public class ArticleService {
         return new ArrayList<>();
     }
 
+    public List<ArticleResponse> getArticlesByUid(int uid, int limit) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
+        parameters.put("limit", limit);
+        try {
+            return articleDao.getArticlesByUid(parameters);
+        } catch (Exception e) {
+            logger.error("getArticlesByUid error parameters = " + parameters, e);
+        }
+        return new ArrayList<>();
+    }
+
 }

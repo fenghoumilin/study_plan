@@ -40,7 +40,7 @@
                     <a href="#" th:href="@{/}">首页</a>
                 </li>
                 <li th:if="${userInfo.getNick() != null}">
-                    <a href="#" th:href="@{/user/settingUI}" th:text="${userInfo.getNick()}"></a>
+                    <a href="#" th:href="@{/user/view(uid=${userInfo.getId()})}" th:text="${userInfo.getNick()}"></a>
                 </li>
                 <li><a href="/group/createUI" th:href="@{/group/createUI}">创建社区</a></li>
                 <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
@@ -55,8 +55,8 @@
                     <a href="/user/loginUI">登录</a>
                 </li>
                 <li th:if="${userInfo.getAvatarPicUrl() != null}">
-                    <a class="navbar-brand" href="#" th:href="@{/user/settingUI}">
-                        <img style="size: auto" alt="Brand" src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
+                    <a class="navbar-brand" href="#" th:href="@{/user/view(uid=${userInfo.getId()})}">
+                        <img style="size: auto" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
                     </a>
                 </li>
             </ul>
@@ -96,5 +96,7 @@
             <input onclick="history.go(-1)" type="button" value="返回">
         </div>
     </div>
+
 </body>
+
 </html>
