@@ -124,8 +124,8 @@ public class ArticleController {
             logger.info("articleResponse = " + articleResponse);
 
             List<GroupInfo> groupInfoListById = groupService.getGroupInfoListById(articleResponse.getGid());
-            List<GroupInfo> hotGroups = recommendService.getHotGroups(4);
-            List<ArticleResponse> hotArticles = recommendService.getHotArticles(4);
+            List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 4);
+            List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(),4);
             ArticleAction articleAction = articleService.getArticleAction(articleId);
             CommentInfo commentInfo = new CommentInfo(articleId, userInfo.getId(), articleResponse.getUid());
             logger.info("articleAction = " + articleAction);

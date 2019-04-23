@@ -10,7 +10,9 @@
         SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` ORDER BY rand() LIMIT #{limit}
     </select>
     <select id="getHotArticles" resultType="com.hpu.study_plan.model.ArticleResponse">
-        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article ORDER BY rand() LIMIT #{limit}
+        SELECT a.id id, uid, u.nick authorName, u.avatar_pic_url authorAvatar, gid, title, content, pic_url picUrl, a.created_time createdTime FROM article a
+        INNER JOIN `user` u
+        ON a.uid=u.id ORDER BY rand() LIMIT #{limit}
     </select>
     <select id="getHotArticleData" resultType="map">
         SELECT art.id aid, uid, gid, tag_id, IFNULL(comment_count,0) comment_count, IFNULL(like_count,0) like_count FROM

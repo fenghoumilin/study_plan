@@ -168,8 +168,8 @@ public class GroupController {
             if (userInfo == null) {
                 userInfo = new UserInfo();
             }
-            List<GroupInfo> hotGroups = recommendService.getHotGroups(4);
-            List<ArticleResponse> hotArticles = recommendService.getHotArticles(4);
+            List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 4);
+            List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 4);
             logger.info("hotArticles = " + hotArticles);
             logger.info("hotGroups = " + hotGroups);
             List<GroupInfo> groupInfoList = groupService.getGroupInfoListById(gid);

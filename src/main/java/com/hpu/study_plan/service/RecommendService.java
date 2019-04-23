@@ -114,7 +114,15 @@ public class RecommendService {
         return new ArrayList<>();
     }
 
-
+    public List<ArticleResponse> getHotArticles(int limit) {
+        Set<Integer> tagSet = new HashSet<>();
+        Random random = new Random();
+        while (tagSet.size() < limit) {
+            tagSet.add(random.nextInt(TAG_COUNT) + 1);
+        }
+        List<Integer> tagList = new ArrayList<>(tagSet);
+        return getHotArticleByTagList(tagList, limit);
+    }
 
     public List<ArticleResponse> getHotArticles(int uid, int limit) {
 
@@ -175,26 +183,19 @@ public class RecommendService {
         return new ArrayList<>();
     }
 
-    public List<ArticleResponse> getHotArticles(int limit) {
-        Set<Integer> tagSet = new HashSet<>();
-        Random random = new Random();
-        while (tagSet.size() < limit) {
-            tagSet.add(random.nextInt(TAG_COUNT) + 1);
-        }
-        List<Integer> tagList = new ArrayList<>(tagSet);
-        return getHotArticleByTagList(tagList, limit);
-    }
+
 
 
 
     public void insertHotData2Redis(){
 
         List<Map<String, Object>> hotArticleDatas = recommendDao.getHotArticleData();
+        logger.info("hotArticleDatas = " + hotArticleDatas.size());
         Map<Integer, Integer> groupScoreMap = new HashMap<>();
         Map<Integer, List<Integer>> tag2Gid = new HashMap<>();
         Map<Integer, List<Integer>> tag2Aid = new HashMap<>();
         List<Integer> aidList = new ArrayList<>();
-        List<Integer> gidList = new ArrayList<>();
+        Set<Integer> gidList = new HashSet<>();
         for (Map<String, Object> hotArticleData : hotArticleDatas) {
             int tagId = ((Long) hotArticleData.get("tag_id")).intValue();
             int gid = ((Long) hotArticleData.get("gid")).intValue();
@@ -209,7 +210,8 @@ public class RecommendService {
         }
 
         //根据gid查询出所有的groupInfo
-        List<GroupInfo> groupInfoList = groupDao.getGroupInfoListByIdList(gidList);
+        List<GroupInfo> groupInfoList = groupDao.getGroupInfoListByIdSet(gidList);
+        logger.info("groupInfoList = " + groupInfoList);
         Map<Integer, ObjectNode> gid2GroupInfo = new HashMap<>();
         for (GroupInfo groupInfo : groupInfoList) {
             gid2GroupInfo.put(groupInfo.getId(), JsonUtils.groupInfo2Node(groupInfo));

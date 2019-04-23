@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @Mapper
@@ -15,7 +16,7 @@ public interface GroupDao {
     int insertGroup(Map<String, Object> paramaters);
     List<GroupInfo> getGroupInfoListByUid(Map<String, Object> paramaters);
     List<GroupInfo> getGroupInfoListById(int id);
-    List<GroupInfo> getGroupInfoListByIdList(List<Integer> gidList);
+    List<GroupInfo> getGroupInfoListByIdSet(Set<Integer> gidList);
     List<Map<String, Object>> getSimpleGroupList(int uid);
     int getGroupTag(int gid);
 }
