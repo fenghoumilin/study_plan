@@ -63,6 +63,18 @@ public class GroupInfo {
                 '}';
     }
 
+    public GroupInfo(int id, String title, String content, String picUrl, int tagId, Date createdTime) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.picUrl = picUrl;
+        this.tagId = tagId;
+        this.createdTime = createdTime;
+    }
+
+    public GroupInfo() {
+    }
+
     public int getId() {
         return id;
     }

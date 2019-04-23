@@ -1,6 +1,5 @@
 package com.hpu.study_plan.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hpu.study_plan.model.UserInfo;
@@ -8,13 +7,11 @@ import com.hpu.study_plan.service.UploadService;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.CheckFileTypeUtils;
 import com.hpu.study_plan.utils.FileUtils;
-import com.hpu.study_plan.utils.RequestParser;
 import com.hpu.study_plan.utils.ResponseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

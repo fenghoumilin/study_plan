@@ -42,7 +42,7 @@ public class ArticleService {
         try {
             articleDao.insertArticle(parameters);
             logger.info("id = " + parameters.get("id"));
-            return ((BigInteger) parameters.get("id")).intValue();
+            return ((Long) parameters.get("id")).intValue();
         } catch (Exception e) {
             logger.error("insertArticle error parameters = " + parameters, e);
         }

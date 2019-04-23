@@ -46,4 +46,14 @@
     <select id="getArticlesByUid" parameterType="map" resultType="com.hpu.study_plan.model.ArticleResponse">
         SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article WHERE uid=#{uid} LIMIT 0, #{limit}
     </select>
+    <select id="getArticleResponseListByIdList" parameterType="collection" resultType="com.hpu.study_plan.model.ArticleResponse">
+        SELECT a.id id, uid, u.nick authorName, u.avatar_pic_url authorAvatar, gid, title, content, pic_url picUrl, a.created_time createdTime FROM article a
+        INNER JOIN `user` u
+        ON a.uid=u.id
+        WHERE a.id IN (
+        <foreach collection="collection" index="index" item="aid"  separator=",">
+            #{aid}
+        </foreach>
+        )
+    </select>
 </mapper>

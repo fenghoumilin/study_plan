@@ -16,6 +16,7 @@ public class RedisConfig {
     private static final int USER_DB = GlobalPropertyUtils.getIntValue("redis.user.db");
     private static final int DEFAULT_DB = GlobalPropertyUtils.getIntValue("redis.default.db");
     private static final int PHONE_CODE_DB = GlobalPropertyUtils.getIntValue("redis.phone_code.db");
+    private static final int RECOMMEND_DB = GlobalPropertyUtils.getIntValue("redis.recommend.db");
 
     @Autowired
     RedisProperties redisProperties;
@@ -30,6 +31,11 @@ public class RedisConfig {
     @Bean(name = "userRedis")
     public StringRedisTemplate userRelationRedis() {
         return buildRedisTemplate(buildConnectionFactory(USER_DB));
+    }
+
+    @Bean(name = "recommendRedis")
+    public StringRedisTemplate recommendRedis() {
+        return buildRedisTemplate(buildConnectionFactory(RECOMMEND_DB));
     }
 
     @Bean(name = "phoneCodeRedis")

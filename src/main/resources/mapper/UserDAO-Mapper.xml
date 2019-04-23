@@ -21,4 +21,7 @@
     <select id="getUserInfoById" parameterType="int" resultType="userInfo">
         SELECT id, nick, phone_number phoneNumber, gender, avatar_pic_url avatarPicUrl, birthday FROM `user` WHERE id=#{id}
     </select>
+    <select id="getUserTagByUid" parameterType="int" resultType="int">
+        SELECT tid FROM user_tag WHERE uid=#{uid}
+    </select>
 </mapper>

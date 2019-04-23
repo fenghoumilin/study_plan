@@ -13,4 +13,5 @@ import java.util.Map;
 public interface RecommendDao {
     List<GroupInfo> getHotGroups(Map<String, Object> parameters);
     List<ArticleResponse> getHotArticles(Map<String, Object> parameters);
+    List<Map<String, Object>> getHotArticleData();
 }

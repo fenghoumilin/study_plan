@@ -20,6 +20,13 @@
     <select id="getGroupInfoListById" parameterType="int" resultType="com.hpu.study_plan.model.GroupInfo">
         SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE id=#{id}
     </select>
+    <select id="getGroupInfoListByIdList" parameterType="collection" resultType="com.hpu.study_plan.model.GroupInfo">
+        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE id IN (
+        <foreach collection="collection" index="index" item="gid"  separator=",">
+            #{gid}
+        </foreach>
+        )
+    </select>
     <select id="getSimpleGroupList" parameterType="int" resultType="map">
         SELECT id, title FROM `group` WHERE uid=#{uid}
     </select>

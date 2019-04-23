@@ -22,6 +22,7 @@ public class RedisUtils {
     private static final Logger logger = LoggerFactory.getLogger(RedisUtils.class);
     private static final String USER_PREFIX = GlobalPropertyUtils.get("redis.user.key.prefix");
     private static final String PHONE_CODE_PREFIX = GlobalPropertyUtils.get("redis.phone_code.key.prefix");
+    private static final String RECOMMEND_PREFIX = GlobalPropertyUtils.get("redis.recommend.key.prefix");
 
     @Autowired
     @Qualifier("stringRedisTemplate")
@@ -35,6 +36,10 @@ public class RedisUtils {
     @Qualifier("phoneCodeRedis")
     StringRedisTemplate phoneCodeRedis;
 
+    @Autowired
+    @Qualifier("recommendRedis")
+    StringRedisTemplate recommendRedis;
+
     public StringRedisTemplate selectRedis(String key) {
 
         try {
@@ -44,6 +49,9 @@ public class RedisUtils {
             }
             if (PHONE_CODE_PREFIX.equals(key)) {
                 return phoneCodeRedis;
+            }
+            if (RECOMMEND_PREFIX.equals(key)) {
+                return recommendRedis;
             }
 
         } catch (Exception e) {

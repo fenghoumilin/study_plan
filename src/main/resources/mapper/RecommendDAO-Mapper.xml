@@ -7,9 +7,21 @@
 <mapper namespace="com.hpu.study_plan.dao.RecommendDao">
 
     <select id="getHotGroups" resultType="com.hpu.study_plan.model.GroupInfo">
-        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` LIMIT #{limit}
+        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` ORDER BY rand() LIMIT #{limit}
     </select>
     <select id="getHotArticles" resultType="com.hpu.study_plan.model.ArticleResponse">
-        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article LIMIT #{limit}
+        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article ORDER BY rand() LIMIT #{limit}
+    </select>
+    <select id="getHotArticleData" resultType="map">
+        SELECT art.id aid, uid, gid, tag_id, IFNULL(comment_count,0) comment_count, IFNULL(like_count,0) like_count FROM
+        (SELECT id, gid, uid author_id FROM article) art
+        LEFT JOIN
+        (SELECT id, COUNT(id) comment_count FROM article_comment WHERE created_time>=DATE_SUB(NOW(), INTERVAL 5 DAY) GROUP BY id) acc
+        ON art.id=acc.id
+        LEFT JOIN
+        (SELECT id, COUNT(id) like_count FROM article_like WHERE created_time>=DATE_SUB(NOW(), INTERVAL 5 DAY) GROUP BY id) alc
+        ON art.id=alc.id
+        INNER JOIN `group` g ON art.gid=g.id
+        GROUP BY aid ORDER BY (IFNULL(comment_count,0)*5+IFNULL(like_count,0)) DESC LIMIT 500
     </select>
 </mapper>

@@ -115,6 +115,8 @@ public class UserController {
         ModelAndView modelAndView = new ModelAndView();
         if (!PhoneNumberUtils.validatePhoneNumber(phoneNumber)) {
             modelAndView.addObject(ResponseUtils.putErrorModel(1002));
+            modelAndView.addObject(new LoginInfo());
+            modelAndView.addObject(new UserInfo());
             modelAndView.setViewName("user/login");
             return modelAndView;
         }
@@ -125,6 +127,8 @@ public class UserController {
                 if (!userService.insertUser("hello world", phoneNumber, 0, "", "2050-01-01")) {
                     logger.info("数据库插入错误");
                     modelAndView.addObject(ResponseUtils.putErrorModel(1012));
+                    modelAndView.addObject(new LoginInfo());
+                    modelAndView.addObject(new UserInfo());
                     modelAndView.setViewName("user/login");
                     return modelAndView;
                 }
@@ -137,6 +141,8 @@ public class UserController {
 
         logger.info("验证码错误");
         modelAndView.addObject(ResponseUtils.putErrorModel(1021));
+        modelAndView.addObject(new LoginInfo());
+        modelAndView.addObject(new UserInfo());
         modelAndView.setViewName("user/login");
         return modelAndView;
     }
@@ -195,6 +201,7 @@ public class UserController {
         }
 
         modelAndView.setViewName("user/login");
+        modelAndView.addObject(new UserInfo());
         modelAndView.addObject(new LoginInfo());
         modelAndView.addObject(ResponseUtils.putErrorModel(1031));
         return modelAndView;

@@ -79,6 +79,21 @@ public class ArticleResponse {
         this.authorAvatar = authorAvatar;
     }
 
+    public ArticleResponse(int id, int uid, int gid, String authorName, String title, String content, String picUrl, String authorAvatar, Date createdTime) {
+        this.id = id;
+        this.uid = uid;
+        this.gid = gid;
+        this.authorName = authorName;
+        this.title = title;
+        this.content = content;
+        this.picUrl = picUrl;
+        this.authorAvatar = authorAvatar;
+        this.createdTime = createdTime;
+    }
+
+    public ArticleResponse() {
+    }
+
     @Override
     public String toString() {
         return "ArticleResponse{" +

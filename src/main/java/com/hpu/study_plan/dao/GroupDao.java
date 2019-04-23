@@ -15,5 +15,6 @@ public interface GroupDao {
     int insertGroup(Map<String, Object> paramaters);
     List<GroupInfo> getGroupInfoListByUid(Map<String, Object> paramaters);
     List<GroupInfo> getGroupInfoListById(int id);
+    List<GroupInfo> getGroupInfoListByIdList(List<Integer> gidList);
     List<Map<String, Object>> getSimpleGroupList(int uid);
 }
