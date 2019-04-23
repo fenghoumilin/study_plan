@@ -6,6 +6,7 @@ import com.hpu.study_plan.utils.PhoneNumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -91,6 +92,19 @@ public class UserService {
             logger.error("updateUser error | parameters = " + parameters);
         }
 
+        return false;
+    }
+
+    public boolean insertUserTag(int uid, int tid) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
+        parameters.put("tid", tid);
+        try {
+            userDao.insertUserTag(parameters);
+            return true;
+        } catch (Exception e) {
+            logger.error("insertUserTag error parameters = " + parameters, e);
+        }
         return false;
     }
 

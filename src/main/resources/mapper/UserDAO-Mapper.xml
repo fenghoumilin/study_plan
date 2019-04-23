@@ -24,4 +24,8 @@
     <select id="getUserTagByUid" parameterType="int" resultType="int">
         SELECT tid FROM user_tag WHERE uid=#{uid}
     </select>
+    <insert id="insertUserTag" parameterType="map">
+        INSERT IGNORE INTO user_tag (uid, tid, created_time)
+        VALUE (#{uid}, #{tid}, now())
+    </insert>
 </mapper>

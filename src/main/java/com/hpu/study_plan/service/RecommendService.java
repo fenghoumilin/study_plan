@@ -106,6 +106,7 @@ public class RecommendService {
                 parameters.put("limit", limit - res.size());
                 res.addAll(recommendDao.getHotGroups(parameters));
             }
+            logger.info("推荐 res = " + res);
             return res;
         } catch (Exception e) {
             logger.error("getHotGroupByTagList error userTag = " + userTag, e);
@@ -166,6 +167,7 @@ public class RecommendService {
                 parameters.put("limit", limit - res.size());
                 res.addAll(recommendDao.getHotArticles(parameters));
             }
+            logger.info("推荐 res = " + res);
             return res;
         } catch (Exception e) {
             logger.error("getHotArticleByTagList error userTag = " + userTag, e);
@@ -194,11 +196,11 @@ public class RecommendService {
         List<Integer> aidList = new ArrayList<>();
         List<Integer> gidList = new ArrayList<>();
         for (Map<String, Object> hotArticleData : hotArticleDatas) {
-            int tagId = (int) hotArticleData.get("tag_id");
+            int tagId = ((Long) hotArticleData.get("tag_id")).intValue();
             int gid = ((Long) hotArticleData.get("gid")).intValue();
             int aid = ((Long) hotArticleData.get("aid")).intValue();
-            int commentCount = (int) hotArticleData.get("comment_count");
-            int likeCount = (int) hotArticleData.get("like_count");
+            int commentCount = ((Long) hotArticleData.get("comment_count")).intValue();
+            int likeCount = ((Long) hotArticleData.get("like_count")).intValue();
             addGroupScoreMap(groupScoreMap, gid, commentCount * 5 + likeCount);
             addTag2ListMap(tag2Gid, tagId, gid);
             addTag2ListMap(tag2Aid, tagId, aid);

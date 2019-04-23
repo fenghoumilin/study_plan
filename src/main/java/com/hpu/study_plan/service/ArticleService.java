@@ -1,12 +1,10 @@
 package com.hpu.study_plan.service;
 
 import com.hpu.study_plan.dao.ArticleDao;
-import com.hpu.study_plan.dao.GroupDao;
 import com.hpu.study_plan.dao.UserDao;
 import com.hpu.study_plan.model.ArticleAction;
 import com.hpu.study_plan.model.ArticleResponse;
 import com.hpu.study_plan.model.CommentInfo;
-import com.hpu.study_plan.model.GroupInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,7 @@ public class ArticleService {
         try {
             articleDao.insertArticle(parameters);
             logger.info("id = " + parameters.get("id"));
-            return ((Long) parameters.get("id")).intValue();
+            return ((BigInteger) parameters.get("id")).intValue();
         } catch (Exception e) {
             logger.error("insertArticle error parameters = " + parameters, e);
         }

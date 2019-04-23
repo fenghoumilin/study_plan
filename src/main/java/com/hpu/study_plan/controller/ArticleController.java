@@ -97,6 +97,7 @@ public class ArticleController {
         if (articleId == 0) {
             return getArticleCreateMAV(phoneNumber, 1012);
         }
+        userService.insertUserTag(userInfo.getId(), groupService.getGroupTag(articleRequest.getGid()));
         logger.info("articleRequest = " + articleRequest);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/article/view?articleId="+articleId);

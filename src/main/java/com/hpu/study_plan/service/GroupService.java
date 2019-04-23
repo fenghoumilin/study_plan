@@ -32,7 +32,7 @@ public class GroupService {
         return new ArrayList<>();
     }
 
-    public boolean insertGroup(int uid, String title, String content, String picUrl, int tagId) {
+    public int insertGroup(int uid, String title, String content, String picUrl, int tagId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("uid", uid);
         parameters.put("title", title);
@@ -41,12 +41,13 @@ public class GroupService {
         parameters.put("tag_id", tagId);
         try {
             groupDao.insertGroup(parameters);
-            return true;
+            logger.info("id = " + parameters.get("id"));
+            return ((Long) parameters.get("id")).intValue();
         } catch (Exception e) {
             logger.error("insertGroup error | " + parameters, e);
         }
 
-        return false;
+        return 0;
     }
 
     public List<GroupInfo> getGroupInfoListByUid(int uid, int limit) {
@@ -79,6 +80,15 @@ public class GroupService {
         }
 
         return new ArrayList<>();
+    }
+
+    public int getGroupTag(int gid) {
+        try {
+            return groupDao.getGroupTag(gid);
+        } catch (Exception e) {
+            logger.error("getGroupTag error | gid = " + gid, e);
+        }
+        return 0;
     }
 
 

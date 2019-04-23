@@ -9,19 +9,19 @@
     <select id="getTagList" parameterType="string" resultType="map">
         SELECT id, `name` FROM `tag`
     </select>
-    <insert id="insertGroup" parameterType="map">
+    <insert id="insertGroup" useGeneratedKeys="true" keyProperty="id" parameterType="map">
         INSERT INTO `group` (uid, title, content, pic_url, tag_id, created_time, update_time)
         VALUE (#{uid}, #{title}, #{content}, #{pic_url}, #{tag_id}, NOW(), NOW())
     </insert>
     <select id="getGroupInfoListByUid" parameterType="map" resultType="com.hpu.study_plan.model.GroupInfo">
-        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE uid=#{uid}
+        SELECT id, title, content, pic_url picUrl, tag_id tagId, created_time createdTime FROM `group` WHERE uid=#{uid}
         ORDER BY id DESC LIMIT 0, #{limit}
     </select>
     <select id="getGroupInfoListById" parameterType="int" resultType="com.hpu.study_plan.model.GroupInfo">
-        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE id=#{id}
+        SELECT id, title, content, pic_url picUrl, tag_id tagId, created_time createdTime FROM `group` WHERE id=#{id}
     </select>
     <select id="getGroupInfoListByIdList" parameterType="collection" resultType="com.hpu.study_plan.model.GroupInfo">
-        SELECT id, title, content, pic_url picUrl, created_time createdTime FROM `group` WHERE id IN (
+        SELECT id, title, content, pic_url picUrl, tag_id tagId, created_time createdTime FROM `group` WHERE id IN (
         <foreach collection="collection" index="index" item="gid"  separator=",">
             #{gid}
         </foreach>
@@ -29,5 +29,8 @@
     </select>
     <select id="getSimpleGroupList" parameterType="int" resultType="map">
         SELECT id, title FROM `group` WHERE uid=#{uid}
+    </select>
+    <select id="getGroupTag" parameterType="int" resultType="int">
+        SELECT tag_id FROM `group` WHERE id=#{gid}
     </select>
 </mapper>

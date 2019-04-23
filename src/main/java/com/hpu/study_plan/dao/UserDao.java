@@ -16,4 +16,5 @@ public interface UserDao {
     UserInfo getUserInfoById(int id);
     int updateUser(Map<String, Object> parameters);
     List<Integer> getUserTagByUid(int uid);
+    int insertUserTag(Map<String, Object> parameters);
 }

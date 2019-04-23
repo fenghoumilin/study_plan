@@ -91,7 +91,7 @@ public class GroupController {
         try {
             groupInfo.setPicUrl(uploadUrl);
             UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
-            groupService.insertGroup(userInfo.getId(), groupInfo.getTitle(), groupInfo.getContent(), groupInfo.getPicUrl(), groupInfo.getTagId());
+            int gid = groupService.insertGroup(userInfo.getId(), groupInfo.getTitle(), groupInfo.getContent(), groupInfo.getPicUrl(), groupInfo.getTagId());
             /*logger.info("userInfo = " + userInfo.toString());
             logger.info("groupInfo = " + groupInfo.toString());
             logger.info("返回社区列表");
@@ -99,8 +99,11 @@ public class GroupController {
             List<GroupInfo> groupInfoList = groupService.getGroupInfoList(userInfo.getId());
             logger.info("groupInfoList = " + groupInfoList);
             modelAndView.addObject("groupInfoList", groupInfoList);*/
-            modelAndView.setViewName("redirect:/group/list?uid=" + userInfo.getId());
-            return modelAndView;
+            if (gid > 0) {
+                userService.insertUserTag(userInfo.getId(), groupService.getGroupTag(gid));
+                modelAndView.setViewName("redirect:/group/list?uid=" + userInfo.getId());
+                return modelAndView;
+            }
         } catch (Exception e) {
             logger.error("groupCreate error", e);
         }

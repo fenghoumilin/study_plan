@@ -17,4 +17,5 @@ public interface GroupDao {
     List<GroupInfo> getGroupInfoListById(int id);
     List<GroupInfo> getGroupInfoListByIdList(List<Integer> gidList);
     List<Map<String, Object>> getSimpleGroupList(int uid);
+    int getGroupTag(int gid);
 }

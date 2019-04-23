@@ -36,6 +36,6 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
     //图片映射
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/img/**").addResourceLocations("file:/Users/liuwei/graduation_project/study_plan/src/main/resources/static/img/");
     }
 }
