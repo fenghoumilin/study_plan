@@ -37,6 +37,11 @@ public class FileUtils {
                 //转化成圆
                 headImage = ImageUtils.transformCircular(headImage, 720);
                 ImageUtils.writeImage(headImage, fileType, realPath);
+            } else {
+                BufferedImage bufferedImage = ImageIO.read(dest);
+                BufferedImage headImage = ImageUtils.narrowImage(bufferedImage, 1750, 1000);
+                //
+                ImageUtils.writeImage(headImage, fileType, realPath);
             }
             return url;
         } catch (Exception e) {

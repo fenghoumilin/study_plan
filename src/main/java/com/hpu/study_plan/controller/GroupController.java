@@ -155,6 +155,10 @@ public class GroupController {
             int page = 0;
             try {
                 page = Integer.parseInt(request.getParameter("page"));
+                logger.info("page = " + page);
+                if (page < 0) {
+                    page = 0;
+                }
             } catch (Exception e) {
                 logger.error("page = 0");
             }
@@ -168,6 +172,8 @@ public class GroupController {
             if (userInfo == null) {
                 userInfo = new UserInfo();
             }
+            int groupFun = groupService.isGroupFun(userInfo.getId(), gid);
+            logger.info("groupFun = " + groupFun);
             List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 4);
             List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 4);
             logger.info("hotArticles = " + hotArticles);
@@ -179,10 +185,54 @@ public class GroupController {
             modelAndView.addObject("hotGroups", hotGroups);
             modelAndView.addObject("hotArticles", hotArticles);
             modelAndView.addObject("articleInfoList", articleInfoList);
+            modelAndView.addObject("groupFun", groupFun);
+            modelAndView.addObject("page", page);
             modelAndView.setViewName("group/view");
             return modelAndView;
         } catch (Exception e) {
             logger.error("groupCreate error", e);
+        }
+        return getGroupCreateMAV(phoneNumber, 1012);
+    }
+
+
+    @RequestMapping(value="/fun", method= RequestMethod.GET)
+    public ModelAndView userLikeGroup(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        try {
+            UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+            int uid = userInfo.getId();
+            int gid = Integer.parseInt(request.getParameter("gid"));
+            userService.insertUserTag(uid, groupService.getGroupTag(gid));
+            groupService.insertGroupFun(uid, gid);
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("redirect:/group/view?gid=" + gid + "&page=0");
+            return modelAndView;
+        } catch (Exception e) {
+            logger.error("groupCreate error", e);
+        }
+        return getGroupCreateMAV(phoneNumber, 1012);
+    }
+
+    @RequestMapping(value="/fun/del", method= RequestMethod.GET)
+    public ModelAndView userUnlikeGroup(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        try {
+            UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+            int uid = userInfo.getId();
+            int gid = Integer.parseInt(request.getParameter("gid"));
+            groupService.delGroupFun(uid, gid);
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("redirect:/group/view?gid=" + gid + "&page=0");
+            return modelAndView;
+        } catch (Exception e) {
+            logger.error("userUnlikeGroup error", e);
         }
         return getGroupCreateMAV(phoneNumber, 1012);
     }

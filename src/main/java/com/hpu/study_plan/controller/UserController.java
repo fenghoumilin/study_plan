@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hpu.study_plan.model.*;
 import com.hpu.study_plan.service.ArticleService;
 import com.hpu.study_plan.service.GroupService;
+import com.hpu.study_plan.service.RecommendService;
 import com.hpu.study_plan.service.UserService;
 import com.hpu.study_plan.utils.*;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/user")
@@ -38,23 +40,29 @@ public class UserController {
     GroupService groupService;
     @Autowired
     ArticleService articleService;
+    @Autowired
+    RecommendService recommendService;
 
     @Autowired
     RedisUtils redisUtils;
 
     @RequestMapping(value="/loginUI", method= RequestMethod.GET)
-    public ModelAndView userRegisterUI(HttpServletRequest request) {
+    public ModelAndView userLoginUI(HttpServletRequest request) {
 
-        logger.info("进入注册页面");
+        logger.info("进入登录页面");
         ModelAndView modelAndView = new ModelAndView();
-        HttpSession session = request.getSession();
-        String sessionId = session.getId();
-        String phoneNumber = (String) session.getAttribute(sessionId);
-        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
-        modelAndView.setViewName("user/login");
-        modelAndView.addObject(new LoginInfo());
-        modelAndView.addObject(userInfo);
-        modelAndView.addObject(new ErrorModel());
+        try {
+            HttpSession session = request.getSession();
+            String sessionId = session.getId();
+            String phoneNumber = (String) session.getAttribute(sessionId);
+            UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+            modelAndView.setViewName("user/login");
+            modelAndView.addObject(new LoginInfo());
+            modelAndView.addObject(userInfo);
+            modelAndView.addObject(new ErrorModel());
+        } catch (Exception e) {
+            logger.info("userLoginUI error ", e);
+        }
 
         return modelAndView;
     }
@@ -134,8 +142,7 @@ public class UserController {
                 }
             }
             session.setAttribute(session.getId(), phoneNumber);
-            modelAndView.addObject("userInfo", userService.getUserInfoByPhone(phoneNumber));
-            modelAndView.setViewName("index");
+            modelAndView.setViewName("redirect:/");
             return modelAndView;
         }
 
@@ -147,13 +154,18 @@ public class UserController {
         return modelAndView;
     }
 
-    @RequestMapping(value="/loginOut", method= RequestMethod.POST)
-    public String userLoginOut(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value="/loginOut", method= RequestMethod.GET)
+    public ModelAndView userLoginOut(HttpServletRequest request, HttpServletResponse response) {
 
-        JsonNode requestJson = RequestParser.getPostParameter(request);
+        HttpSession session = request.getSession();
 
+        String sessionId = session.getId();
+        session.removeAttribute(sessionId);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:/user/loginUI");
+        logger.info("退出登录");
 
-        return "";
+        return modelAndView;
     }
 
     @RequestMapping(value="/settingUI", method= RequestMethod.GET)
@@ -228,6 +240,34 @@ public class UserController {
         modelAndView.addObject("articleList", articleList);
 
         modelAndView.addObject(new ErrorModel());
+
+        return modelAndView;
+    }
+
+    @RequestMapping(value="/search", method= RequestMethod.POST)
+    public ModelAndView userSearch(HttpServletRequest request, @RequestParam("content") String content) {
+
+        logger.info("content = " + content);
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+        if (userInfo == null) {
+            userInfo = new UserInfo();
+        }
+
+        List<ArticleResponse> articleInfoList = articleService.getArticlesByGid(13, 0);
+        ModelAndView modelAndView = new ModelAndView();
+        List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 4);
+        List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 4);
+
+        modelAndView.addObject("userInfo", userInfo);
+        modelAndView.addObject("hotGroups", hotGroups);
+        modelAndView.addObject("hotArticles", hotArticles);
+        modelAndView.addObject("articleInfoList", articleInfoList);
+
+        modelAndView.setViewName("search_res");
+
 
         return modelAndView;
     }

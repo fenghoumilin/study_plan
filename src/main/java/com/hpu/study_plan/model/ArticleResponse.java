@@ -7,6 +7,7 @@ public class ArticleResponse {
     int id;
     int uid;
     int gid;
+    int commentCount;
     String authorName;
     String title;
     String content;
@@ -54,7 +55,6 @@ public class ArticleResponse {
         this.id = id;
     }
 
-
     public String getPicUrl() {
         return picUrl;
     }
@@ -77,6 +77,14 @@ public class ArticleResponse {
 
     public void setAuthorAvatar(String authorAvatar) {
         this.authorAvatar = authorAvatar;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 
     public ArticleResponse(int id, int uid, int gid, String authorName, String title, String content, String picUrl, String authorAvatar, Date createdTime) {

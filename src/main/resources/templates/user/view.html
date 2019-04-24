@@ -60,7 +60,7 @@
                 </li>
                 <li th:if="${userInfo.getAvatarPicUrl() != null}">
                     <a class="navbar-brand" href="#" th:href="@{/user/view(uid=${userInfo.getId()})}">
-                        <img style="size: auto" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
+                        <img style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
                     </a>
                 </li>
             </ul>
@@ -72,7 +72,7 @@
     <table width="89%" height="418" border="0" align="center">
         <tr>
             <td colspan="2" align="center">
-                <img src="#" th:src="@{'/img/user/avatar/'+${showUserInfo.avatarPicUrl}}">
+                <img style="height: 40px;width: 40px;border-radius: 50%;margin-right: 15px" src="#" th:src="@{'/img/user/avatar/'+${showUserInfo.avatarPicUrl}}">
             </td>
         </tr>
         <tr>
@@ -81,6 +81,11 @@
                 <p th:if="${showUserInfo.gender == 1}">性别： 男</p>
                 <p th:if="${showUserInfo.gender == 2}">性别： 男</p>
                 <p th:text="'生日：' + ${showUserInfo.getBirthday()}"></p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <a href="/user/loginOut" th:href="@{/user/loginOut}">注销</a>
             </td>
         </tr>
     </table>

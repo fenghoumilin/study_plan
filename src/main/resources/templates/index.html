@@ -47,8 +47,8 @@
                 <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
                 <li><a href="/user/settingUI" th:href="@{/user/settingUI}">个人信息设置</a></li>
             </ul>
-            <form class="navbar-form navbar-left">
-                <input type="text" class="form-control col-lg-8" placeholder="搜索">
+            <form class="navbar-form navbar-left" action="#" th:action="@{/user/search}" method="post">
+                <input type="text" class="form-control col-lg-8" name="content" placeholder="搜索">
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li>
@@ -59,7 +59,7 @@
                 </li>
                 <li th:if="${userInfo.getAvatarPicUrl() != null}">
                     <a class="navbar-brand" href="#" th:href="@{/user/view(uid=${userInfo.getId()})}">
-                        <img style="size: auto" alt="Brand" src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
+                        <img style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px" alt="Brand" src="../static/img/img2.jpg" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
                     </a>
                 </li>
             </ul>

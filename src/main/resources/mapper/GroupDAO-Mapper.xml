@@ -28,9 +28,29 @@
         )
     </select>
     <select id="getSimpleGroupList" parameterType="int" resultType="map">
-        SELECT id, title FROM `group` WHERE uid=#{uid}
+        SELECT id, title FROM `group` WHERE uid=#{uid} ORDER BY id DESC
+    </select>
+    <select id="getSimpleGroupListByGroupFun" parameterType="int" resultType="map">
+        SELECT g.id, title FROM `group` g INNER JOIN group_fun gf ON g.id=gf.gid WHERE g.uid=#{uid} ORDER BY g.id DESC
     </select>
     <select id="getGroupTag" parameterType="int" resultType="int">
         SELECT tag_id FROM `group` WHERE id=#{gid}
     </select>
+    <insert id="insertGroupFun" parameterType="map">
+        INSERT INTO group_fun (gid, uid, created_time)
+        VALUE (#{gid}, #{uid}, now())
+    </insert>
+    <select id="isGroupFun" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM group_fun WHERE gid=#{gid} AND uid=#{uid}
+    </select>
+    <select id="isGroupOwner" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM `group` WHERE id=#{gid} AND uid=#{uid}
+    </select>
+    <delete id="delGroupFun" parameterType="map">
+        DELETE FROM group_fun WHERE gid=#{gid} AND uid=#{uid}
+    </delete>
+    <insert id="copyOldGroupFun" parameterType="map">
+        INSERT INTO group_fun_history (gid, uid, created_time, deleted_time)
+        SELECT gid, uid, created_time, now() FROM group_fun WHERE gid=#{gid} AND uid=#{uid}
+    </insert>
 </mapper>

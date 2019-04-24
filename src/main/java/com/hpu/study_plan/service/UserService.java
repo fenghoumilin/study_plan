@@ -96,6 +96,9 @@ public class UserService {
     }
 
     public boolean insertUserTag(int uid, int tid) {
+        if (uid <= 0 || tid <= 0) {
+            return false;
+        }
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("uid", uid);
         parameters.put("tid", tid);

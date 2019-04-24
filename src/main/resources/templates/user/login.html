@@ -51,13 +51,13 @@
             <input type="text" class="form-control col-lg-8" placeholder="搜索">
         </form>
         <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="/article/createUI" th:href="@{/article/createUI}">创建文章</a></li>
-            <li th:if="${userInfo.getAvatarPicUrl() == null}">
+            <li ><a href="/article/createUI" th:href="@{/article/createUI}">创建文章</a></li>
+            <li class="active" th:if="${userInfo.getAvatarPicUrl() == null}">
                 <a href="/user/loginUI">登录</a>
             </li>
             <li th:if="${userInfo.getAvatarPicUrl() != null}">
                 <a class="navbar-brand" href="#" th:href="@{/user/view(uid=${userInfo.getId()})}">
-                    <img style="size: auto" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
+                    <img style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
                 </a>
             </li>
         </ul>

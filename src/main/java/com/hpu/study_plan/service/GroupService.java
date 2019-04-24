@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,7 @@ public class GroupService {
         try {
             groupDao.insertGroup(parameters);
             logger.info("id = " + parameters.get("id"));
-            return ((Long) parameters.get("id")).intValue();
+            return ((BigInteger) parameters.get("id")).intValue();
         } catch (Exception e) {
             logger.error("insertGroup error | " + parameters, e);
         }
@@ -74,7 +75,9 @@ public class GroupService {
     public List<Map<String, Object>> getSimpleGroupList(int uid) {
 
         try {
-            return groupDao.getSimpleGroupList(uid);
+            List<Map<String, Object>> simpleGroupList = groupDao.getSimpleGroupList(uid);
+            simpleGroupList.addAll(groupDao.getSimpleGroupListByGroupFun(uid));
+            return simpleGroupList;
         } catch (Exception e) {
             logger.error("getSimpleGroupList error | uid = " + uid, e);
         }
@@ -91,7 +94,73 @@ public class GroupService {
         return 0;
     }
 
+    public boolean insertGroupFun(int uid, int gid) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
+        parameters.put("gid", gid);
+        try {
+            groupDao.insertGroupFun(parameters);
+            return true;
+        } catch (Exception e) {
+            logger.error("insertGroupFun error | parameters = " + parameters, e);
+        }
+        return false;
+    }
 
+    //如果是社区创建者，就不需要关注返回2
+    public int isGroupFun(int uid, int gid) {
+
+        if (uid <= 0 || gid <= 0) {
+            return 0;
+        }
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
+        parameters.put("gid", gid);
+        try {
+            int owner = groupDao.isGroupOwner(parameters);
+            if (owner == 1) {
+                return 2;
+            }
+            return groupDao.isGroupFun(parameters);
+        } catch (Exception e) {
+            logger.error("isGroupFun error | parameters = " + parameters, e);
+        }
+
+        return 0;
+    }
+
+    public boolean copyOldGroupFun(Map<String, Object> parameters) {
+
+        try {
+            groupDao.copyOldGroupFun(parameters);
+            return true;
+        } catch (Exception e) {
+            logger.error("copyOldGroupFun error | parameters = " + parameters, e);
+        }
+
+        return false;
+    }
+    public boolean delGroupFun(int uid, int gid) {
+        if (uid <= 0 || gid <= 0) {
+            return false;
+        }
+        if (isGroupFun(uid, gid) != 1) {
+            return false;
+        }
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
+        parameters.put("gid", gid);
+        if (copyOldGroupFun(parameters)) {
+            try {
+                groupDao.delGroupFun(parameters);
+                return true;
+            } catch (Exception e) {
+                logger.error("delGroupFun error | parameters = " + parameters, e);
+            }
+        }
+
+        return false;
+    }
 
 
 }

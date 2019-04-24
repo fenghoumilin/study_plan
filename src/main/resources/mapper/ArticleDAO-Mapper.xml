@@ -17,7 +17,12 @@
         WHERE a.id=#{id}
     </select>
     <select id="getArticlesByGid" parameterType="map" resultType="com.hpu.study_plan.model.ArticleResponse">
-        SELECT id, uid, gid, title, content, pic_url picUrl, created_time createdTime FROM article WHERE gid=#{gid} LIMIT #{start}, #{end}
+        SELECT a.id, a.uid, gid, title, a.content, pic_url picUrl, a.created_time createdTime, COUNT(ac.id) commentCount
+        FROM article a LEFT JOIN article_comment ac
+        ON a.id=ac.aid
+        WHERE gid=#{gid}
+        GROUP BY a.id
+        LIMIT #{start}, #{end}
     </select>
     <insert id="insertArticleLike" parameterType="map">
         INSERT INTO article_like(aid, uid, created_time)

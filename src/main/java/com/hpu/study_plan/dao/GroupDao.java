@@ -13,10 +13,16 @@ import java.util.Set;
 public interface GroupDao {
 
     List<Map<String, Object>> getTagList();
-    int insertGroup(Map<String, Object> paramaters);
-    List<GroupInfo> getGroupInfoListByUid(Map<String, Object> paramaters);
+    int insertGroup(Map<String, Object> parameters);
+    List<GroupInfo> getGroupInfoListByUid(Map<String, Object> parameters);
     List<GroupInfo> getGroupInfoListById(int id);
     List<GroupInfo> getGroupInfoListByIdSet(Set<Integer> gidList);
     List<Map<String, Object>> getSimpleGroupList(int uid);
+    List<Map<String, Object>> getSimpleGroupListByGroupFun(int uid);
     int getGroupTag(int gid);
+    int insertGroupFun(Map<String, Object> parameters);
+    int isGroupFun(Map<String, Object> parameters);
+    int isGroupOwner(Map<String, Object> parameters);
+    int copyOldGroupFun(Map<String, Object> parameters);
+    int delGroupFun(Map<String, Object> parameters);
 }

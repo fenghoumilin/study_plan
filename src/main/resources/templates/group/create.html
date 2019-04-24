@@ -58,7 +58,7 @@
                 </li>
                 <li th:if="${userInfo.getAvatarPicUrl() != null}">
                     <a class="navbar-brand" href="#" th:href="@{/user/view(uid=${userInfo.getId()})}">
-                        <img style="size: auto" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
+                        <img style="float:left;height: 40px;width: 40px;border-radius: 50%;margin-right: 15px" alt="Brand" src="#" th:src="@{'/img/user/avatar/'+${userInfo.avatarPicUrl}}" >
                     </a>
                 </li>
             </ul>
