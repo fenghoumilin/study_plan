@@ -64,5 +64,11 @@
         </foreach>
         )
     </select>
+    <select id="getSimpleArticleComment" resultType="map">
+        SELECT uid, aid FROM article_comment
+    </select>
+    <select id="getSimpleArticleLike" resultType="map">
+        SELECT uid, aid FROM article_like
+    </select>
 
 </mapper>

@@ -24,4 +24,7 @@ public interface ArticleDao {
     List<ArticleResponse> getArticlesByUid(Map<String, Object> parameters);
     List<ArticleResponse> getArticleResponseListByIdList(List aidList);
     int getArticleCountByGid(int gid);
+    List<Map<String, Object>> getSimpleArticleComment();
+    List<Map<String, Object>> getSimpleArticleLike();
+
 }

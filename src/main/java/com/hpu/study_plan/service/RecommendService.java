@@ -11,14 +11,17 @@ import com.hpu.study_plan.dao.UserDao;
 import com.hpu.study_plan.model.ArticleResponse;
 import com.hpu.study_plan.model.GroupInfo;
 import com.hpu.study_plan.model.GroupScore;
+import com.hpu.study_plan.model.SimilarInfo;
 import com.hpu.study_plan.utils.GlobalPropertyUtils;
 import com.hpu.study_plan.utils.JsonUtils;
+import com.hpu.study_plan.utils.MapUtils;
 import com.hpu.study_plan.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -202,9 +205,9 @@ public class RecommendService {
             int aid = ((Long) hotArticleData.get("aid")).intValue();
             int commentCount = ((Long) hotArticleData.get("comment_count")).intValue();
             int likeCount = ((Long) hotArticleData.get("like_count")).intValue();
-            addGroupScoreMap(groupScoreMap, gid, commentCount * 5 + likeCount);
-            addTag2ListMap(tag2Gid, tagId, gid);
-            addTag2ListMap(tag2Aid, tagId, aid);
+            MapUtils.addGroupScoreMap(groupScoreMap, gid, commentCount * 5 + likeCount);
+            MapUtils.addTag2ListMap(tag2Gid, tagId, gid);
+            MapUtils.addTag2ListMap(tag2Aid, tagId, aid);
             gidList.add(gid);
             aidList.add(aid);
         }
@@ -232,7 +235,7 @@ public class RecommendService {
                 arrayNode.add(aid2ArticleResponse.get(aid));
             }
             String key = getKey("article", tagId);
-            redisUtils.set(key, arrayNode.toString());
+            redisUtils.set(key, arrayNode.toString(), 864000L);
         }
 
 
@@ -253,30 +256,179 @@ public class RecommendService {
                 arrayNode.add(gid2GroupInfo.get(groupScore.getGid()));
             }
             String key = getKey("group", tagId);
-            redisUtils.set(key, arrayNode.toString());
+            redisUtils.set(key, arrayNode.toString(), 864000L);
         }
     }
-
-
 
     private String getKey(String type, int tagId) {
         return RECOMMEND_PREFIX + ":" + type + ":" + tagId;
     }
 
-    private void addGroupScoreMap(Map<Integer, Integer> groupScoreMap, int gid, int count) {
-        if (groupScoreMap.containsKey(gid)) {
-            groupScoreMap.put(gid, groupScoreMap.get(gid) + count);
-        } else {
-            groupScoreMap.put(gid, count);
+
+    public List<ArticleResponse> getUserItemCFArticles(int uid, int limit) {
+
+        List<ArticleResponse> res = new ArrayList<>();
+        try {
+            if (uid > 0) {
+
+                String value = redisUtils.get(getUserItemCFKey(uid));
+                if ("".equals(value)) {
+                    return getHotArticles(limit);
+                } else {
+                    List<Integer> aidList = new ArrayList<>();
+                    String[] aidArray = value.split("_");
+                    for (String aid : aidArray) {
+                        aidList.add(Integer.parseInt(aid));
+                    }
+                    //TODO
+                }
+            } else {
+                res = getHotArticles(limit);
+            }
+            return res;
+        } catch (Exception e) {
+            logger.error("getHotArticles error", e);
+        }
+        return new ArrayList<>();
+    }
+
+
+    public void insertUserItemCF2Redis() {
+
+        //将用户点赞过和用户评论过的aid作为用户感兴趣aid
+        List<Map<String, Object>> articleCommentList = articleDao.getSimpleArticleComment();
+        List<Map<String, Object>> articleLikeList = articleDao.getSimpleArticleLike();
+
+        //找出对每一个aid感兴趣对所有uid
+        Map<Integer, Set<Integer>> aid2UidMap = new HashMap<>();
+        //获取所有aid
+        Set<Integer> allAidSet = new HashSet<>();
+        //获取所有对uid
+        Set<Integer> allUidSet = new HashSet<>();
+        //获取所有uid感兴趣对aid
+        Map<Integer, Set<Integer>> uid2AidMap = new HashMap<>();
+        getInterestArticle(articleCommentList, aid2UidMap, allAidSet, uid2AidMap, allUidSet);
+        getInterestArticle(articleLikeList, aid2UidMap, allAidSet, uid2AidMap, allUidSet);
+
+        //计算出两两aid之间的相似度
+        Map<Integer, Map<Integer, Double>> aidSimilarMap = new HashMap<>();
+        List<Integer> allAidList = new ArrayList<>(allAidSet);
+        for (int i=0; i<allAidList.size(); i++) {
+            for (int j=0; j<allAidList.size(); j++) {
+                Set<Integer> iSet = aid2UidMap.get(allAidList.get(i));
+                Set<Integer> jSet = aid2UidMap.get(allAidList.get(j));
+
+                double unCount = 0;
+                for (int sameUid : iSet) {
+                    if (jSet.contains(sameUid)) {
+                        unCount++;
+                    }
+                }
+                //相似度为0不存放
+                if (unCount == 0D) {
+                    continue;
+                }
+                double iCount = (double) iSet.size();
+                double jCount = (double) jSet.size();
+                double under = Math.sqrt(iCount * jCount);
+                double similar = unCount / under;
+                MapUtils.putAidSimilarMap(aidSimilarMap, i, j, similar);
+                MapUtils.putAidSimilarMap(aidSimilarMap, j, i, similar);
+            }
+        }
+        Map<Integer, List<SimilarInfo>> sortedAidSimilarMap = sortAidSimilarMap(aidSimilarMap);
+
+        for (int uid : allUidSet) {
+            Set<Integer> userInterestSet = uid2AidMap.get(uid);
+            if (userInterestSet == null || userInterestSet.size() <= 0) {
+                continue;
+            }
+            List<SimilarInfo> similarInfos = new ArrayList<>();
+            
+            for (int aid : allAidList) {
+                double aidScore = getAidScoreByAidSimilarMap(sortedAidSimilarMap, userInterestSet, aid);
+                if (aidScore > 0) {
+                    similarInfos.add(new SimilarInfo(aid, aidScore));
+                }
+            }
+            if (similarInfos.size() > 0) {
+                Collections.sort(similarInfos);
+                StringBuilder sb = new StringBuilder();
+                for (SimilarInfo similarInfo : similarInfos) {
+                    sb.append(similarInfo.getAid()).append("_");
+                }
+                String key = getUserItemCFKey(uid);
+                redisUtils.set(key, sb.toString(), 864000L);
+            }
+        }
+
+    }
+
+    private String getUserItemCFKey(int uid) {
+        return RECOMMEND_PREFIX + ":user_itemCF:" + uid;
+    }
+
+    //根据本地排序获取
+    private double getAidScoreByAidSimilarMap(Map<Integer, List<SimilarInfo>> sortedAidSimilarMap, Set<Integer> userInterestSet, int aid) {
+        double aidScore = 0;
+        List<SimilarInfo> aidSimilarTopSet = getTopNBYAidSimilarMap(sortedAidSimilarMap, aid, 20);
+        if (aidSimilarTopSet.isEmpty()) {
+            return 0;
+        }
+
+        for (SimilarInfo aidSimilarInfo : aidSimilarTopSet) {
+            int similarAid = aidSimilarInfo.getAid();
+            double similarScore = aidSimilarInfo.getScore();
+            if (userInterestSet.contains(similarAid)) {
+                aidScore += similarScore;
+            }
+        }
+        return aidScore;
+    }
+    
+    private List<SimilarInfo> getTopNBYAidSimilarMap(Map<Integer, List<SimilarInfo>> sortedAidSimilarMap, int aid, int n) {
+        if (!sortedAidSimilarMap.containsKey(aid)) {
+            return new ArrayList<>();
+        }
+        List<SimilarInfo> similarInfos = sortedAidSimilarMap.get(aid);
+        if (n > similarInfos.size()) {
+            return similarInfos.subList(0, similarInfos.size());
+        }
+        return similarInfos.subList(0, n);
+    }
+
+    private Map<Integer, List<SimilarInfo>> sortAidSimilarMap(Map<Integer, Map<Integer, Double>> aidSimilarMap) {
+
+        try {
+            Map<Integer, List<SimilarInfo>> res = new HashMap<>();
+            for (Map.Entry<Integer, Map<Integer, Double>> similarMap : aidSimilarMap.entrySet()) {
+                int key = similarMap.getKey();
+                List<SimilarInfo> similarInfos = new ArrayList<>();
+                for (Map.Entry<Integer, Double> entry : similarMap.getValue().entrySet()) {
+                    similarInfos.add(new SimilarInfo(entry.getKey(), entry.getValue()));
+                }
+                Collections.sort(similarInfos);
+                res.put(key, similarInfos);
+            }
+            return res;
+        } catch (Exception e) {
+            logger.error("sortAidSimilarMap error", e);
+        }
+
+        return new HashMap<>();
+    }
+
+    private void getInterestArticle(List<Map<String, Object>> articleInfoList, Map<Integer, Set<Integer>> aid2UidMap,
+                                    Set<Integer> allAidSet, Map<Integer, Set<Integer>> uid2AidMap, Set<Integer> allUidSet) {
+        for (Map<String, Object> articleInfo : articleInfoList) {
+            int uid = ((Long) articleInfo.get("uid")).intValue();
+            int aid = ((Long) articleInfo.get("aid")).intValue();
+            MapUtils.addArticleUidMap(aid2UidMap, aid, uid);
+            MapUtils.addArticleUidMap(uid2AidMap, uid, aid);
+            allAidSet.add(aid);
+            allUidSet.add(uid);
         }
     }
 
-    private void addTag2ListMap(Map<Integer, List<Integer>> tag2Gid, int tagId, int gid) {
-        if (tag2Gid.containsKey(gid)) {
-            tag2Gid.get(tagId).add(gid);
-        } else {
-            tag2Gid.put(tagId, new ArrayList<Integer>() {{add(gid);}});
-        }
-    }
 
 }
