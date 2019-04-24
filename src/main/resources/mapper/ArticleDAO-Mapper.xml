@@ -64,6 +64,20 @@
         </foreach>
         )
     </select>
+    <select id="getArticleResponseListByIdListOrder" parameterType="collection" resultType="com.hpu.study_plan.model.ArticleResponse">
+        SELECT a.id id, uid, u.nick authorName, u.avatar_pic_url authorAvatar, gid, title, content, pic_url picUrl, a.created_time createdTime FROM article a
+        INNER JOIN `user` u
+        ON a.uid=u.id
+        WHERE a.id IN (
+        <foreach collection="collection" index="index" item="aid"  separator=",">
+            #{aid}
+        </foreach>
+        ) ORDER BY FIELD(id,
+        <foreach collection="collection" separator="," index="index" item="aid">
+            #{aid}
+        </foreach>
+        )
+    </select>
     <select id="getSimpleArticleComment" resultType="map">
         SELECT uid, aid FROM article_comment
     </select>

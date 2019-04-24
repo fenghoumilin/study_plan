@@ -281,6 +281,14 @@ public class RecommendService {
                         aidList.add(Integer.parseInt(aid));
                     }
                     //TODO
+
+                    List<ArticleResponse> articleResponseList = articleDao.getArticleResponseListByIdListOrder(aidList);
+                    if (articleResponseList.size() >= limit) {
+                        return articleResponseList.subList(0, limit);
+                    } else {
+                        articleResponseList.addAll(getHotArticles(limit - articleResponseList.size()));
+                        return articleResponseList;
+                    }
                 }
             } else {
                 res = getHotArticles(limit);
