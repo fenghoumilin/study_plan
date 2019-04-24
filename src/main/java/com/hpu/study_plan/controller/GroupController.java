@@ -164,7 +164,13 @@ public class GroupController {
             }
 
             ModelAndView modelAndView = new ModelAndView();
+            int totalPage = articleService.getArticleTotalPageByGid(gid);
+            logger.info("totalPage = " + totalPage);
+            if (totalPage < page) {
+                page = totalPage;
+            }
             List<ArticleResponse> articleInfoList = articleService.getArticlesByGid(gid, page);
+
             logger.info("articleInfoList = " + articleInfoList);
 
             logger.info("phoneNumber = " + phoneNumber);
@@ -187,6 +193,7 @@ public class GroupController {
             modelAndView.addObject("articleInfoList", articleInfoList);
             modelAndView.addObject("groupFun", groupFun);
             modelAndView.addObject("page", page);
+            modelAndView.addObject("totalPage", totalPage);
             modelAndView.setViewName("group/view");
             return modelAndView;
         } catch (Exception e) {

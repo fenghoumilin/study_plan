@@ -23,4 +23,5 @@ public interface ArticleDao {
     List<CommentInfo> getCommentInfoList(int aid);
     List<ArticleResponse> getArticlesByUid(Map<String, Object> parameters);
     List<ArticleResponse> getArticleResponseListByIdList(List aidList);
+    int getArticleCountByGid(int gid);
 }

@@ -24,6 +24,9 @@
         GROUP BY a.id
         LIMIT #{start}, #{end}
     </select>
+    <select id="getArticleCountByGid" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM article WHERE gid=#{gid}
+    </select>
     <insert id="insertArticleLike" parameterType="map">
         INSERT INTO article_like(aid, uid, created_time)
         VALUE(#{aid}, #{uid}, now())
@@ -61,4 +64,5 @@
         </foreach>
         )
     </select>
+
 </mapper>

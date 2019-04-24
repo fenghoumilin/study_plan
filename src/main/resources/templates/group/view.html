@@ -132,8 +132,21 @@
                 </th:block>
 
                 <ul class="pager">
-                    <li class="previous disabled"><a href="#" th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}-1))}">&larr; 上一页</a></li>
-                    <li class="next"><a href="#" th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}+1))}">下一页 &rarr;</a></li>
+                    <li th:class="${page == 0}?'disabled' : ''" >
+                        <a th:if="${page == 0}" href="#">上一页</a>
+                        <a th:if="${page > 0}" href="#" th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}-1))}">上一页</a>
+                    </li>
+                    <li th:if="${(page - 3) >= 0}" ><a th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}-3))}" th:text="${page - 2}" >1</a></li>
+                    <li th:if="${page - 2 >= 0}" ><a th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}-2))}" th:text="${page - 1}" >1</a></li>
+                    <li th:if="${page - 1 >= 0}" ><a th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}-1))}" th:text="${page}" >1</a></li>
+                    <li class="active"><a href="#" th:text="${page+1}" >1</a></li>
+                    <li th:if="${page + 1 < totalPage}" ><a th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}+1))}" th:text="${page + 2}" >1</a></li>
+                    <li th:if="${page + 2 < totalPage}" ><a th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}+2))}" th:text="${page + 3}" >1</a></li>
+                    <li th:if="${page + 3 < totalPage}" ><a th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}+3))}" th:text="${page + 4}" >1</a></li>
+                    <li th:class="${page + 1 == totalPage}?'disabled' : ''" >
+                        <a th:if="${page + 1 == totalPage}" href="#">下一页</a>
+                        <a th:if="${page + 1 < totalPage}" href="#" th:href="@{/group/view(gid=${groupInfo.getId()}, page=(${page}+1))}">下一页</a>
+                    </li>
                 </ul>
             </div>
             <div class="col-sm-4">

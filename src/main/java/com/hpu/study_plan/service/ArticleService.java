@@ -66,9 +66,25 @@ public class ArticleService {
         try {
             return articleDao.getArticlesByGid(parameters);
         } catch (Exception e) {
-            logger.error("getArticlesByGid error gid = " + gid);
+            logger.error("getArticlesByGid error parameters = " + parameters, e);
         }
         return new ArrayList<>();
+    }
+    public int getArticleTotalPageByGid(int gid) {
+
+        if (gid <= 0) {
+            return 0;
+        }
+        try {
+            int count = articleDao.getArticleCountByGid(gid);
+            if(count % 6 == 0) {
+                return count / 6;
+            }
+            return count / 6 + 1;
+        } catch (Exception e) {
+            logger.error("getArticleTotalPageByGid error gid = " + gid, e);
+        }
+        return 0;
     }
 
     public boolean insertArticleLike(int uid, int articleId) {
