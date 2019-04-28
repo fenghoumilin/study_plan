@@ -15,8 +15,8 @@
         ON a.uid=u.id ORDER BY rand() LIMIT #{limit}
     </select>
     <select id="getHotArticleData" resultType="map">
-        SELECT art.id aid, uid, gid, tag_id, IFNULL(comment_count,0) comment_count, IFNULL(like_count,0) like_count FROM
-        (SELECT id, gid, uid author_id FROM article) art
+        SELECT art.id aid, art.title, uid, gid, tag_id, IFNULL(comment_count,0) comment_count, IFNULL(like_count,0) like_count FROM
+        (SELECT id, gid, uid author_id, title FROM article) art
         LEFT JOIN
         (SELECT id, COUNT(id) comment_count FROM article_comment WHERE created_time>=DATE_SUB(NOW(), INTERVAL 5 DAY) GROUP BY id) acc
         ON art.id=acc.id

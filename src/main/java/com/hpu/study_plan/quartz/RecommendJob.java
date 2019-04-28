@@ -35,9 +35,12 @@ public class RecommendJob implements Job, InitializingBean {
     public void execute(JobExecutionContext jobExecutionContext) {
 
         if (GLOBAL_RUN.equals("true") && QUARTZ_RUN.equals("true")) {
-            logger.info("用户推荐任务开始");
+            logger.info("用户热门推荐任务开始");
             recommendService.insertHotData2Redis();
-            logger.info("用户推荐任务结束");
+            logger.info("用户热门推荐任务结束");
+            logger.info("用户个性推荐任务开始");
+            recommendService.insertUserItemCF2Redis();
+            logger.info("用户个性推荐任务结束");
         } else {
             logger.info("用户推荐任务未执行，请注意");
         }

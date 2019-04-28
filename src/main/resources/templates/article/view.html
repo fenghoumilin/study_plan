@@ -48,8 +48,8 @@
                 <li><a href="/user/settingUI" th:href="@{/group/list(uid=${userInfo.getId()})}">社区列表</a></li>
                 <li><a href="/user/settingUI" th:href="@{/user/settingUI}">个人信息设置</a></li>
             </ul>
-            <form class="navbar-form navbar-left">
-                <input type="text" class="form-control col-lg-8" placeholder="搜索">
+            <form class="navbar-form navbar-left" action="#" th:action="@{/user/search}" method="post">
+                <input type="text" class="form-control col-lg-8" name="content" placeholder="搜索文章">
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li>

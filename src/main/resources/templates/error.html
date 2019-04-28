@@ -41,8 +41,8 @@
                     <a href="#" th:href="@{/}">点击返回首页</a>
                 </li>
             </ul>
-            <form class="navbar-form navbar-left">
-                <input type="text" class="form-control col-lg-8" placeholder="搜索">
+            <form class="navbar-form navbar-left" action="#" th:action="@{/user/search}" method="post">
+                <input type="text" class="form-control col-lg-8" name="content" placeholder="搜索文章">
             </form>
             <ul class="nav navbar-nav navbar-right">
                 <li>

@@ -4,11 +4,11 @@ import java.util.*;
 
 public class MapUtils {
 
-    public static void addGroupScoreMap(Map<Integer, Integer> groupScoreMap, int gid, int count) {
-        if (groupScoreMap.containsKey(gid)) {
-            groupScoreMap.put(gid, groupScoreMap.get(gid) + count);
+    public static void addGroupScoreMap(Map<Integer, Integer> scoreMap, int id, int count) {
+        if (scoreMap.containsKey(id)) {
+            scoreMap.put(id, scoreMap.get(id) + count);
         } else {
-            groupScoreMap.put(gid, count);
+            scoreMap.put(id, count);
         }
     }
 

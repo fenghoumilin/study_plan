@@ -4,14 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hpu.study_plan.dao.ArticleDao;
-import com.hpu.study_plan.dao.GroupDao;
-import com.hpu.study_plan.dao.RecommendDao;
-import com.hpu.study_plan.dao.UserDao;
-import com.hpu.study_plan.model.ArticleResponse;
-import com.hpu.study_plan.model.GroupInfo;
-import com.hpu.study_plan.model.GroupScore;
-import com.hpu.study_plan.model.SimilarInfo;
+import com.hpu.study_plan.dao.*;
+import com.hpu.study_plan.model.*;
 import com.hpu.study_plan.utils.GlobalPropertyUtils;
 import com.hpu.study_plan.utils.JsonUtils;
 import com.hpu.study_plan.utils.MapUtils;
@@ -21,8 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.parser.Entity;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,6 +25,7 @@ public class RecommendService {
     private static final String RECOMMEND_PREFIX = GlobalPropertyUtils.get("redis.recommend.key.prefix");
     private static SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final int TAG_COUNT = GlobalPropertyUtils.getIntValue("tag_count");
+    private static final int GET_TAG_COUNT = GlobalPropertyUtils.getIntValue("get_tag_count");
 
     ObjectMapper mapper = new ObjectMapper();
     @Autowired
@@ -45,6 +38,8 @@ public class RecommendService {
     RedisUtils redisUtils;
     @Autowired
     UserDao userDao;
+    @Autowired
+    ElasticSearchDao elasticSearchDao;
 
     public List<GroupInfo> getHotGroups(int limit) {
         Set<Integer> tagSet = new HashSet<>();
@@ -106,8 +101,8 @@ public class RecommendService {
             //不够就随机取，一般不会出现这种情况
             if (res.size() < limit) {
                 Map<String, Object> parameters = new HashMap<>();
-                parameters.put("limit", limit - res.size());
-                res.addAll(recommendDao.getHotGroups(parameters));
+                parameters.put("limit", limit);
+                res = addHotGroup(res, recommendDao.getHotGroups(parameters), limit);
             }
             logger.info("推荐 res = " + res);
             return res;
@@ -117,22 +112,46 @@ public class RecommendService {
         return new ArrayList<>();
     }
 
+    private List<GroupInfo> addHotGroup(List<GroupInfo> origin, List<GroupInfo> addGroup, int limit) {
+        if (origin == null || origin.size() == 0) {
+            return addGroup;
+        }
+        Set<Integer> set = new HashSet<>();
+
+        for (GroupInfo groupInfo : origin) {
+            set.add(groupInfo.getId());
+        }
+        for (GroupInfo groupInfo : addGroup) {
+            if (!set.contains(groupInfo.getId())) {
+                origin.add(groupInfo);
+                if (origin.size() == limit) {
+                    return origin;
+                }
+            }
+        }
+
+        return origin;
+    }
+
     public List<ArticleResponse> getHotArticles(int limit) {
         Set<Integer> tagSet = new HashSet<>();
         Random random = new Random();
-        while (tagSet.size() < limit) {
+        while (tagSet.size() < GET_TAG_COUNT) {
             tagSet.add(random.nextInt(TAG_COUNT) + 1);
         }
         List<Integer> tagList = new ArrayList<>(tagSet);
+        logger.info("tagList" + tagList);
         return getHotArticleByTagList(tagList, limit);
     }
 
     public List<ArticleResponse> getHotArticles(int uid, int limit) {
 
         List<ArticleResponse> res = new ArrayList<>();
+        logger.info("uid = " + uid);
         try {
             if (uid > 0) {
                 List<Integer> userTag = userDao.getUserTagByUid(uid);
+                logger.info("userTag = " + userTag);
                 res = getHotArticleByTagList(userTag, limit);
             } else {
                 res = getHotArticles(limit);
@@ -164,6 +183,7 @@ public class RecommendService {
                     allArticleResponse.add(articleInfoList);
                 }
             }
+            logger.info("allArticleResponse = " + allArticleResponse);
             int cycCount = 0;
             while (cycCount < limit && res.size() < limit) {
                 for (List<ArticleResponse> articleInfoList : allArticleResponse) {
@@ -175,8 +195,8 @@ public class RecommendService {
             }
             if (res.size() < limit) {
                 Map<String, Object> parameters = new HashMap<>();
-                parameters.put("limit", limit - res.size());
-                res.addAll(recommendDao.getHotArticles(parameters));
+                parameters.put("limit", limit);
+                res = addHotArticle(res, recommendDao.getHotArticles(parameters), limit);
             }
             logger.info("推荐 res = " + res);
             return res;
@@ -186,9 +206,27 @@ public class RecommendService {
         return new ArrayList<>();
     }
 
+    public List<ArticleResponse> addHotArticle(List<ArticleResponse> origin, List<ArticleResponse> addArticle, int limit) {
+        if (origin == null || origin.size() == 0) {
+            return addArticle;
+        }
+        Set<Integer> set = new HashSet<>();
+        logger.info("origin = " + origin);
 
+        for (ArticleResponse articleResponse : origin) {
+            set.add(articleResponse.getId());
+        }
+        for (ArticleResponse articleResponse : addArticle) {
+            if (!set.contains(articleResponse.getId())) {
+                origin.add(articleResponse);
+                if (origin.size() == limit) {
+                    return origin;
+                }
+            }
+        }
 
-
+        return origin;
+    }
 
     public void insertHotData2Redis(){
 
@@ -199,17 +237,28 @@ public class RecommendService {
         Map<Integer, List<Integer>> tag2Aid = new HashMap<>();
         List<Integer> aidList = new ArrayList<>();
         Set<Integer> gidList = new HashSet<>();
+        List<ArticleES> diaryScoreList = new ArrayList<>();
         for (Map<String, Object> hotArticleData : hotArticleDatas) {
             int tagId = ((Long) hotArticleData.get("tag_id")).intValue();
             int gid = ((Long) hotArticleData.get("gid")).intValue();
             int aid = ((Long) hotArticleData.get("aid")).intValue();
+            String title = (String) hotArticleData.get("title");
             int commentCount = ((Long) hotArticleData.get("comment_count")).intValue();
             int likeCount = ((Long) hotArticleData.get("like_count")).intValue();
+            diaryScoreList.add(new ArticleES(aid, title, commentCount * 5 + likeCount));
             MapUtils.addGroupScoreMap(groupScoreMap, gid, commentCount * 5 + likeCount);
             MapUtils.addTag2ListMap(tag2Gid, tagId, gid);
             MapUtils.addTag2ListMap(tag2Aid, tagId, aid);
             gidList.add(gid);
             aidList.add(aid);
+        }
+
+        //存放入elasticSearch
+        try {
+            elasticSearchDao.deleteAll();
+            elasticSearchDao.saveAll(diaryScoreList);
+        } catch (Exception e) {
+            logger.info("elasticSearchDao error", e);
         }
 
         //根据gid查询出所有的groupInfo
@@ -276,18 +325,25 @@ public class RecommendService {
                     return getHotArticles(limit);
                 } else {
                     List<Integer> aidList = new ArrayList<>();
+                    logger.info("aidList = " + aidList.size());
                     String[] aidArray = value.split("_");
                     for (String aid : aidArray) {
                         aidList.add(Integer.parseInt(aid));
                     }
-                    //TODO
-
+                    //自己创建的日志不进行推荐
+                    Set<Integer> userCreatedArticles = getUserCreatedArticles(uid);
                     List<ArticleResponse> articleResponseList = articleDao.getArticleResponseListByIdListOrder(aidList);
-                    if (articleResponseList.size() >= limit) {
-                        return articleResponseList.subList(0, limit);
+
+                    logger.info("articleResponseList  = " + articleResponseList.size());
+                    for (ArticleResponse articleResponse : articleResponseList) {
+                        if (!userCreatedArticles.contains(articleResponse.getId())) {
+                            res.add(articleResponse);
+                        }
+                    }
+                    if (res.size() >= limit) {
+                        return res.subList(0, limit);
                     } else {
-                        articleResponseList.addAll(getHotArticles(limit - articleResponseList.size()));
-                        return articleResponseList;
+                        return addHotArticle(res, getHotArticles(limit), limit);
                     }
                 }
             } else {
@@ -300,13 +356,28 @@ public class RecommendService {
         return new ArrayList<>();
     }
 
+    private Set<Integer> getUserCreatedArticles(int uid) {
+        try {
+            List<Integer> simpleArticles = articleDao.getSimpleArticlesByUid(uid);
+            return new HashSet<>(simpleArticles);
+
+        } catch (Exception e) {
+            logger.error("getUserCreatedArticles error uid = " + uid, e);
+        }
+        return new HashSet<>();
+    }
+
+
 
     public void insertUserItemCF2Redis() {
 
-        //将用户点赞过和用户评论过的aid作为用户感兴趣aid
+        //将用户创建，点赞过和用户评论过的aid作为用户感兴趣aid
+        List<Map<String, Object>> articleCreateList = articleDao.getSimpleArticleCreate();
+        logger.info("articleCreateList = " + articleCreateList);
         List<Map<String, Object>> articleCommentList = articleDao.getSimpleArticleComment();
+        logger.info("articleCommentList = " + articleCommentList);
         List<Map<String, Object>> articleLikeList = articleDao.getSimpleArticleLike();
-
+        logger.info("articleLikeList = " + articleLikeList);
         //找出对每一个aid感兴趣对所有uid
         Map<Integer, Set<Integer>> aid2UidMap = new HashMap<>();
         //获取所有aid
@@ -315,16 +386,24 @@ public class RecommendService {
         Set<Integer> allUidSet = new HashSet<>();
         //获取所有uid感兴趣对aid
         Map<Integer, Set<Integer>> uid2AidMap = new HashMap<>();
+        getInterestArticle(articleCreateList, aid2UidMap, allAidSet, uid2AidMap, allUidSet);
         getInterestArticle(articleCommentList, aid2UidMap, allAidSet, uid2AidMap, allUidSet);
         getInterestArticle(articleLikeList, aid2UidMap, allAidSet, uid2AidMap, allUidSet);
+        logger.info("aid2UidMap = " + aid2UidMap);
 
+        logger.info("uid2AidMap = " + uid2AidMap);
+        logger.info("allUidSet = " + allUidSet);
         //计算出两两aid之间的相似度
         Map<Integer, Map<Integer, Double>> aidSimilarMap = new HashMap<>();
+        logger.info("allAidSet = " + allAidSet);
         List<Integer> allAidList = new ArrayList<>(allAidSet);
+        logger.info("allAidList = " + allAidList);
         for (int i=0; i<allAidList.size(); i++) {
-            for (int j=0; j<allAidList.size(); j++) {
-                Set<Integer> iSet = aid2UidMap.get(allAidList.get(i));
-                Set<Integer> jSet = aid2UidMap.get(allAidList.get(j));
+            for (int j=i+1; j<allAidList.size(); j++) {
+                int iAid = allAidList.get(i);
+                int jAid = allAidList.get(j);
+                Set<Integer> iSet = aid2UidMap.get(iAid);
+                Set<Integer> jSet = aid2UidMap.get(jAid);
 
                 double unCount = 0;
                 for (int sameUid : iSet) {
@@ -340,11 +419,13 @@ public class RecommendService {
                 double jCount = (double) jSet.size();
                 double under = Math.sqrt(iCount * jCount);
                 double similar = unCount / under;
-                MapUtils.putAidSimilarMap(aidSimilarMap, i, j, similar);
-                MapUtils.putAidSimilarMap(aidSimilarMap, j, i, similar);
+                MapUtils.putAidSimilarMap(aidSimilarMap, iAid, jAid, similar);
+                MapUtils.putAidSimilarMap(aidSimilarMap, jAid, iAid, similar);
             }
         }
+        logger.info("aidSimilarMap = " + aidSimilarMap);
         Map<Integer, List<SimilarInfo>> sortedAidSimilarMap = sortAidSimilarMap(aidSimilarMap);
+        logger.info("sortedAidSimilarMap = " + sortedAidSimilarMap);
 
         for (int uid : allUidSet) {
             Set<Integer> userInterestSet = uid2AidMap.get(uid);
@@ -360,6 +441,7 @@ public class RecommendService {
                 }
             }
             if (similarInfos.size() > 0) {
+                logger.info("similarInfos = " + similarInfos);
                 Collections.sort(similarInfos);
                 StringBuilder sb = new StringBuilder();
                 for (SimilarInfo similarInfo : similarInfos) {

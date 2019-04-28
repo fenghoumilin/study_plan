@@ -200,15 +200,11 @@ public class UserController {
                 modelAndView.addObject(ResponseUtils.putErrorModel(1032));
             }
             userInfo.setAvatarPicUrl(uploadUrl);
-            if (!userService.updateUser(userInfo.getNick(), userInfo.getGender(), userInfo.getAvatarPicUrl(), userInfo.getBirthday())) {
-                modelAndView.setViewName("/index");
-                modelAndView.addObject(userInfo);
-                modelAndView.addObject(ResponseUtils.putErrorModel(1012));
+            if (!userService.updateUser(userInfo.getId(), userInfo.getNick(), userInfo.getGender(), userInfo.getAvatarPicUrl(), userInfo.getBirthday())) {
+                modelAndView.setViewName("redirect:/");
                 return modelAndView;
             }
-            modelAndView.setViewName("/index");
-            modelAndView.addObject(userInfo);
-            modelAndView.addObject(new ErrorModel());
+            modelAndView.setViewName("redirect:/");
             return modelAndView;
         }
 
@@ -256,7 +252,12 @@ public class UserController {
             userInfo = new UserInfo();
         }
 
-        List<ArticleResponse> articleInfoList = articleService.getArticlesByGid(13, 0);
+        int limit = 6;
+        List<ArticleResponse> articleInfoList = articleService.searchByContent(content, limit);
+        if (limit - articleInfoList.size() > 0) {
+            articleInfoList = recommendService.addHotArticle(articleInfoList, recommendService.getHotArticles(userInfo.getId(), limit), limit);
+        }
+        logger.info("articleInfoList = " + articleInfoList);
         ModelAndView modelAndView = new ModelAndView();
         List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 4);
         List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 4);
@@ -267,7 +268,6 @@ public class UserController {
         modelAndView.addObject("articleInfoList", articleInfoList);
 
         modelAndView.setViewName("search_res");
-
 
         return modelAndView;
     }

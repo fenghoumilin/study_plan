@@ -72,7 +72,7 @@
         <foreach collection="collection" index="index" item="aid"  separator=",">
             #{aid}
         </foreach>
-        ) ORDER BY FIELD(id,
+        ) ORDER BY FIELD(a.id,
         <foreach collection="collection" separator="," index="index" item="aid">
             #{aid}
         </foreach>
@@ -83,6 +83,12 @@
     </select>
     <select id="getSimpleArticleLike" resultType="map">
         SELECT uid, aid FROM article_like
+    </select>
+    <select id="getSimpleArticleCreate" resultType="map">
+        SELECT uid, id aid FROM article
+    </select>
+    <select id="getSimpleArticlesByUid" parameterType="int" resultType="map">
+        SELECT id FROM article WHERE uid=#{uid}
     </select>
 
 </mapper>

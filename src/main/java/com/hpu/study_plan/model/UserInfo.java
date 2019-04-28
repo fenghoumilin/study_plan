@@ -2,7 +2,7 @@ package com.hpu.study_plan.model;
 
 public class UserInfo {
 
-    private int id;
+    private int id = 0;
     private String nick;
     private String phoneNumber;
     private int gender;

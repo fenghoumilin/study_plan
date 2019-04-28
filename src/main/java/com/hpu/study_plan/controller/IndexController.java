@@ -48,9 +48,11 @@ public class IndexController {
 
         List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 3);
         List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 5);
+        List<ArticleResponse> itemCFArticles = recommendService.getUserItemCFArticles(userInfo.getId(), 3);
 
         modelAndView.addObject("hotGroups", hotGroups);
         modelAndView.addObject("hotArticles", hotArticles);
+        modelAndView.addObject("itemCFArticles", itemCFArticles);
         modelAndView.addObject(userInfo);
         modelAndView.setViewName("index");
 

@@ -78,8 +78,9 @@ public class UserService {
         return new UserInfo();
     }
 
-    public boolean updateUser(String nick, int gender, String avatarPicUrl, String birthday) {
+    public boolean updateUser(int uid, String nick, int gender, String avatarPicUrl, String birthday) {
         Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
         parameters.put("nick", nick);
         parameters.put("gender", gender);
         parameters.put("avatarPicUrl", avatarPicUrl);

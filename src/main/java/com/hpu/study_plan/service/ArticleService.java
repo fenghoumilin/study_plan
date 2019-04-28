@@ -1,10 +1,9 @@
 package com.hpu.study_plan.service;
 
 import com.hpu.study_plan.dao.ArticleDao;
+import com.hpu.study_plan.dao.ElasticSearchDao;
 import com.hpu.study_plan.dao.UserDao;
-import com.hpu.study_plan.model.ArticleAction;
-import com.hpu.study_plan.model.ArticleResponse;
-import com.hpu.study_plan.model.CommentInfo;
+import com.hpu.study_plan.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ArticleService {
@@ -26,6 +22,8 @@ public class ArticleService {
     ArticleDao articleDao;
     @Autowired
     UserDao userDao;
+    @Autowired
+    ElasticSearchDao elasticSearchDao;
 
     public int insertArticle(int uid, int gid, String title, String content, String pic_url) {
 
@@ -39,8 +37,10 @@ public class ArticleService {
         logger.info("insertArticle parameters = " + parameters);
         try {
             articleDao.insertArticle(parameters);
+            int articleId = ((BigInteger) parameters.get("id")).intValue();
             logger.info("id = " + parameters.get("id"));
-            return ((BigInteger) parameters.get("id")).intValue();
+            elasticSearchDao.save(new ArticleES(articleId, title));
+            return articleId;
         } catch (Exception e) {
             logger.error("insertArticle error parameters = " + parameters, e);
         }
@@ -164,5 +164,43 @@ public class ArticleService {
         }
         return new ArrayList<>();
     }
+
+
+    public List<ArticleResponse> searchByContent(String content, int limit) {
+
+        try {
+            logger.info("ES start");
+            List<ArticleES> articleESList = elasticSearchDao.findByTitleLike(content);
+            logger.info("articleESList = " + articleESList);
+            logger.info("ES end");
+            if (articleESList == null || articleESList.size() == 0) {
+                return new ArrayList<>();
+            }
+            List<ArticleScore> articleScoreList = new ArrayList<>();
+            List<Integer> articleIdList = new ArrayList<>();
+            for (ArticleES articleES : articleESList) {
+                articleScoreList.add(new ArticleScore(articleES.getArticleId(), articleES.getTitle(), articleES.getScore()));
+            }
+            Collections.sort(articleScoreList);
+            logger.info("articleScoreList = " + articleScoreList);
+            for (ArticleScore articleScore : articleScoreList) {
+                articleIdList.add(articleScore.getAid());
+            }
+            List<ArticleResponse> articleResponseList = articleDao.getArticleResponseListByIdList(articleIdList);
+            if (articleResponseList == null || articleResponseList.size() == 0) {
+                return new ArrayList<>();
+            }
+            if (articleResponseList.size() > limit) {
+                return articleResponseList.subList(0, limit);
+            } else {
+                return articleResponseList;
+            }
+
+        } catch (Exception e) {
+            logger.error("getArticlesByUid error content = " + content, e);
+        }
+        return new ArrayList<>();
+    }
+
 
 }
