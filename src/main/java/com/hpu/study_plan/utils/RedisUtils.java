@@ -209,6 +209,7 @@ public class RedisUtils {
             if (stringRedisTemplate.hasKey(key)) {
                 stringRedisTemplate.delete(key);
             }
+            stringRedisTemplate.expire(key, 3600, TimeUnit.SECONDS);
             operations.rightPushAll(key, nodesString);
         } catch (Exception e) {
             logger.error("pushListToRedis error " + key + "|" + nodesString, e);
