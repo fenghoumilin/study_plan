@@ -166,7 +166,7 @@ public class ArticleService {
     }
 
 
-    public List<ArticleResponse> searchByContent(String content, int limit) {
+    public List<ArticleResponse> searchByContent(String content) {
 
         try {
             logger.info("ES start");
@@ -190,11 +190,7 @@ public class ArticleService {
             if (articleResponseList == null || articleResponseList.size() == 0) {
                 return new ArrayList<>();
             }
-            if (articleResponseList.size() > limit) {
-                return articleResponseList.subList(0, limit);
-            } else {
-                return articleResponseList;
-            }
+            return articleResponseList;
 
         } catch (Exception e) {
             logger.error("getArticlesByUid error content = " + content, e);

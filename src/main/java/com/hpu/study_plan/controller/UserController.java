@@ -2,6 +2,7 @@ package com.hpu.study_plan.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hpu.study_plan.model.*;
 import com.hpu.study_plan.service.ArticleService;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/user")
 @Controller
@@ -31,6 +33,7 @@ public class UserController {
     private static final String PHONE_CODE_PREFIX = GlobalPropertyUtils.get("redis.phone_code.key.prefix");
     private static final String USER_AVATAR = GlobalPropertyUtils.get("img_type.user_avatar");
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final String RECOMMEND_PREFIX = GlobalPropertyUtils.get("redis.recommend.key.prefix");
     private ObjectMapper mapper = new ObjectMapper();
 
 
@@ -241,7 +244,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/search", method= RequestMethod.POST)
-    public ModelAndView userSearch(HttpServletRequest request, @RequestParam("content") String content) {
+    public ModelAndView userSearchPost(HttpServletRequest request, @RequestParam("content") String content) {
 
         logger.info("content = " + content);
         HttpSession session = request.getSession();
@@ -253,9 +256,26 @@ public class UserController {
         }
 
         int limit = 6;
-        List<ArticleResponse> articleInfoList = articleService.searchByContent(content, limit);
-        if (limit - articleInfoList.size() > 0) {
+        int page = 0, totalPage = 1;
+        List<ArticleResponse> articleInfoList = articleService.searchByContent(content);
+        int articleInfoListSize = articleInfoList.size();
+        if (limit - articleInfoListSize > 0) {
             articleInfoList = recommendService.addHotArticle(articleInfoList, recommendService.getHotArticles(userInfo.getId(), limit), limit);
+        } else {
+            if (articleInfoListSize % limit == 0) {
+                totalPage = articleInfoListSize / limit;
+            } else {
+                totalPage = articleInfoListSize / limit + 1;
+            }
+            List<String> nodesString = new ArrayList<>();
+            logger.info("groupTasks = " + articleInfoList.toString());
+            for (ArticleResponse articleResponse : articleInfoList) {
+                ObjectNode objectNode = JsonUtils.articleResponse2Node(articleResponse);
+                nodesString.add(objectNode.toString());
+            }
+            String key = getArticleSearchKey(sessionId);
+            redisUtils.pushListToRedis(key, nodesString);
+            articleInfoList = articleInfoList.subList(0, limit);
         }
         logger.info("articleInfoList = " + articleInfoList);
         ModelAndView modelAndView = new ModelAndView();
@@ -266,10 +286,51 @@ public class UserController {
         modelAndView.addObject("hotGroups", hotGroups);
         modelAndView.addObject("hotArticles", hotArticles);
         modelAndView.addObject("articleInfoList", articleInfoList);
-
+        modelAndView.addObject("page", page);
+        modelAndView.addObject("totalPage", totalPage);
         modelAndView.setViewName("search_res");
 
         return modelAndView;
+    }
+
+    @RequestMapping(value="/search", method= RequestMethod.GET)
+    public ModelAndView userSearchGet(HttpServletRequest request, @RequestParam("page") int page, @RequestParam("totalPage") int totalPage) {
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+        if (userInfo == null) {
+            userInfo = new UserInfo();
+        }
+
+        int limit = 6;
+        String key = getArticleSearchKey(sessionId);
+        ArrayNode nodesFromRedis = redisUtils.getNodesFromRedis(key, page, limit);
+        List<ArticleResponse> articleInfoList = new ArrayList<>();
+        for (JsonNode jsonNode : nodesFromRedis) {
+            articleInfoList.add(JsonUtils.node2ArticleResponse(jsonNode));
+        }
+
+        logger.info("articleInfoList = " + articleInfoList);
+        ModelAndView modelAndView = new ModelAndView();
+        List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 4);
+        List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 4);
+
+        modelAndView.addObject("userInfo", userInfo);
+        modelAndView.addObject("hotGroups", hotGroups);
+        modelAndView.addObject("hotArticles", hotArticles);
+        modelAndView.addObject("articleInfoList", articleInfoList);
+        modelAndView.addObject("page", page);
+        modelAndView.addObject("totalPage", totalPage);
+
+        modelAndView.setViewName("search_res");
+        return modelAndView;
+    }
+
+
+    private String getArticleSearchKey(String sessionId) {
+        return RECOMMEND_PREFIX + ":article:search:" + sessionId;
     }
 
 }

@@ -2,14 +2,19 @@ package com.hpu.study_plan.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hpu.study_plan.model.ArticleResponse;
 import com.hpu.study_plan.model.GroupInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class JsonUtils {
 
@@ -76,5 +81,7 @@ public class JsonUtils {
         }
         return new ArticleResponse();
     }
+
+
 
 }

@@ -202,5 +202,47 @@ public class RedisUtils {
         return sb.toString();
     }
 
+    public List<String> pushListToRedis(String key, List<String> nodesString) {
+        try {
+            StringRedisTemplate stringRedisTemplate = selectRedis(key);
+            ListOperations<String, String> operations = stringRedisTemplate.opsForList();
+            if (stringRedisTemplate.hasKey(key)) {
+                stringRedisTemplate.delete(key);
+            }
+            operations.rightPushAll(key, nodesString);
+        } catch (Exception e) {
+            logger.error("pushListToRedis error " + key + "|" + nodesString, e);
+        }
+        return nodesString;
+    }
+
+    public ArrayNode getNodesFromRedis(String key, int page, int limit) {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode nodes = mapper.createArrayNode();
+        int start = page * limit, end = start + limit-1;
+        List<String> nodesString = listGet(key, start, end);
+        for (String nodeString : nodesString) {
+            try {
+                nodes.add(mapper.readTree(nodeString));
+            } catch (Exception e) {
+                logger.error("getNodesFromRedis error", e);
+            }
+        }
+        logger.info("nodes = " + nodes.toString());
+
+        return nodes;
+    }
+
+    public List<String> listGet(final String key, int start, int end) {
+        try {
+            StringRedisTemplate stringRedisTemplate = selectRedis(key);
+            ListOperations<String, String> operations = stringRedisTemplate.opsForList();
+            return operations.range(key, start, end);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
 
 }

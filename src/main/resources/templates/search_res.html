@@ -96,6 +96,23 @@
                         <div class="clearfix"></div>
                     </div>
                 </th:block>
+                <ul class="pager">
+                    <li th:class="${page == 0}?'disabled' : ''" >
+                        <a th:if="${page == 0}" href="#">上一页</a>
+                        <a th:if="${page > 0}" href="#" th:href="@{/user/search(totalPage=${totalPage}, page=(${page}-1))}">上一页</a>
+                    </li>
+                    <th:block th:each="i:${#numbers.sequence(0,2)}">
+                        <li th:if="${(page - 3 + i) >= 0}" ><a th:href="@{/user/search(totalPage=${totalPage}, page=(${page + i - 3}))}" th:text="${page - 2 + i}" >1</a></li>
+                    </th:block>
+                    <li class="active"><a href="#" th:text="${page+1}" >1</a></li>
+                    <th:block th:each="i:${#numbers.sequence(0,2)}">
+                        <li th:if="${page + 1 + i < totalPage}" ><a th:href="@{/user/search(totalPage=${totalPage}, page=(${page + i + 1}))}" th:text="${page + 2 + i}" >1</a></li>
+                    </th:block>
+                    <li th:class="${page + 1 == totalPage}?'disabled' : ''" >
+                        <a th:if="${page + 1 == totalPage}" href="#">下一页</a>
+                        <a th:if="${page + 1 < totalPage}" href="#" th:href="@{/user/search(totalPage=${totalPage}, page=(${page}+1))}">下一页</a>
+                    </li>
+                </ul>
             </div>
             <div class="col-sm-4">
                     <div class="view-content-right">
