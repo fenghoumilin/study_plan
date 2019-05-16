@@ -14,6 +14,7 @@ import java.util.Map;
 @Mapper
 public interface ArticleDao {
     int insertArticle(Map<String, Object> parameters);
+    int updateArticle(Map<String, Object> parameters);
     ArticleResponse getArticleResponse(int id);
     List<ArticleResponse> getArticlesByGid(Map<String, Object> parameters);
     int insertArticleLike(Map<String, Object> parameters);

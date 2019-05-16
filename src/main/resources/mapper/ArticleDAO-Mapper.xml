@@ -10,6 +10,9 @@
         INSERT INTO `article` (uid, gid, title, content, pic_url, created_time, update_time)
         VALUE (#{uid}, #{gid}, #{title}, #{content}, #{pic_url}, NOW(), NOW())
     </insert>
+    <update id="updateArticle" parameterType="map">
+        UPDATE article SET gid=#{gid}, title=#{title}, content=#{content}, pic_url=#{pic_url}, update_time=NOW() WHERE id=#{aid}
+    </update>
     <select id="getArticleResponse" parameterType="int" resultType="com.hpu.study_plan.model.ArticleResponse">
         SELECT a.id id, uid, u.nick authorName, u.avatar_pic_url authorAvatar, gid, title, content, pic_url picUrl, a.created_time createdTime FROM article a
         INNER JOIN `user` u

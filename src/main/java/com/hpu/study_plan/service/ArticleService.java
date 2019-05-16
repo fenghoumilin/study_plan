@@ -49,6 +49,26 @@ public class ArticleService {
 
     }
 
+    public int updateArticle(int aid, int gid, String title, String content, String pic_url) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("aid", aid);
+        parameters.put("gid", gid);
+        parameters.put("title", title);
+        parameters.put("content", content);
+        parameters.put("pic_url", pic_url);
+
+        logger.info("insertArticle parameters = " + parameters);
+        try {
+            articleDao.updateArticle(parameters);
+            return aid;
+        } catch (Exception e) {
+            logger.error("insertArticle error parameters = " + parameters, e);
+        }
+
+        return 0;
+
+    }
     public ArticleResponse getArticleResponse(int id) {
         try {
             return articleDao.getArticleResponse(id);

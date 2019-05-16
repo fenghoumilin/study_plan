@@ -55,6 +55,9 @@
                 <li>
                     <a href="/article/createUI">写文章</a>
                 </li>
+                <li th:if="${userInfo.getId() == articleResponse.getUid()}">
+                    <a href="/user/loginUI" th:href="@{/article/updateUI(aid=${articleResponse.getId()})}">更新</a>
+                </li>
                 <li th:if="${userInfo.getAvatarPicUrl() == null}">
                     <a href="/user/loginUI">登录</a>
                 </li>

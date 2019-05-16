@@ -50,9 +50,24 @@ public class ArticleController {
         return getArticleCreateMAV(phoneNumber, 0);
     }
 
-    private ModelAndView getArticleCreateMAV(String phoneNumber, int code) {
+    @RequestMapping(value="/updateUI", method= RequestMethod.GET)
+    public ModelAndView articleupdateUI(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        int aid = Integer.parseInt(request.getParameter("aid"));
         UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
-        ArticleRequest articleRequest = new ArticleRequest();
+        ArticleResponse articleResponse = articleService.getArticleResponse(aid);
+        if (articleResponse.getUid() == userInfo.getId()) {
+            return getArticleUpdateMAV(userInfo, articleResponse);
+        }
+        logger.info("phoneNumber = " + phoneNumber);
+
+        return getArticleCreateMAV(phoneNumber, 1012);
+    }
+
+    private ModelAndView getArticleUpdateMAV(UserInfo userInfo, ArticleResponse articleResponse) {
         logger.info("userInfo = " + userInfo.toString());
         logger.info("创建文章");
         List<Map<String, Object>> groupList = groupService.getSimpleGroupList(userInfo.getId());
@@ -66,7 +81,31 @@ public class ArticleController {
             return modelAndView;
         }
         modelAndView.addObject("userInfo", userInfo);
-        modelAndView.addObject("articleRequest", articleRequest);
+        modelAndView.addObject("articleResponse", articleResponse);
+        modelAndView.addObject("groupList", groupList);
+        modelAndView.addObject("errorModel", new ErrorModel());
+
+        modelAndView.setViewName("article/create");
+        return modelAndView;
+    }
+
+    private ModelAndView getArticleCreateMAV(String phoneNumber, int code) {
+        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+        ArticleResponse articleResponse = new ArticleResponse();
+        logger.info("userInfo = " + userInfo.toString());
+        logger.info("创建文章");
+        List<Map<String, Object>> groupList = groupService.getSimpleGroupList(userInfo.getId());
+        ModelAndView modelAndView = new ModelAndView();
+        if (groupList.size() == 0) {
+            modelAndView.addObject("userInfo", userInfo);
+            modelAndView.addObject("groupInfo", new GroupInfo());
+            modelAndView.addObject("tagList", groupService.getTagList());
+            modelAndView.addObject("errorModel", ResponseUtils.putErrorModel(1041));
+            modelAndView.setViewName("group/create");
+            return modelAndView;
+        }
+        modelAndView.addObject("userInfo", userInfo);
+        modelAndView.addObject("articleResponse", articleResponse);
         modelAndView.addObject("groupList", groupList);
         if (code == 0) {
             modelAndView.addObject("errorModel", new ErrorModel());
@@ -79,7 +118,7 @@ public class ArticleController {
     }
 
     @RequestMapping(value="/create", method= RequestMethod.POST)
-    public ModelAndView articleCreate(HttpServletRequest request, @ModelAttribute ArticleRequest articleRequest,
+    public ModelAndView articleCreate(HttpServletRequest request, @ModelAttribute ArticleResponse articleResponse,
                                       @RequestParam("pic") MultipartFile file) {
 
         HttpSession session = request.getSession();
@@ -88,17 +127,28 @@ public class ArticleController {
         String phoneNumber = (String) session.getAttribute(sessionId);
         logger.info("phoneNumber = " + phoneNumber);
         String uploadUrl = FileUtils.upload(file, ARTICLE_PIC);
+        int articleId = articleResponse.getId();
         if (StringUtils.isEmpty(uploadUrl)) {
-            return getArticleCreateMAV(phoneNumber, 1032);
+            if (articleId <= 0) {
+                return getArticleCreateMAV(phoneNumber, 1032);
+            } else {
+                uploadUrl = articleResponse.getPicUrl();
+            }
         }
         UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
-        int articleId = articleService.insertArticle(userInfo.getId(), articleRequest.getGid(),
-                articleRequest.getTitle(), articleRequest.getContent(), uploadUrl);
+        if (articleId > 0) {
+            articleId = articleService.updateArticle(articleId, articleResponse.getGid(),
+                    articleResponse.getTitle(), articleResponse.getContent(), uploadUrl);
+        } else {
+            articleId = articleService.insertArticle(userInfo.getId(), articleResponse.getGid(),
+                    articleResponse.getTitle(), articleResponse.getContent(), uploadUrl);
+        }
+
         if (articleId == 0) {
             return getArticleCreateMAV(phoneNumber, 1012);
         }
-        userService.insertUserTag(userInfo.getId(), groupService.getGroupTag(articleRequest.getGid()));
-        logger.info("articleRequest = " + articleRequest);
+        userService.insertUserTag(userInfo.getId(), groupService.getGroupTag(articleResponse.getGid()));
+        logger.info("articleResponse = " + articleResponse);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:/article/view?articleId="+articleId);
 

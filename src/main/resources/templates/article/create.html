@@ -64,10 +64,16 @@
     </nav>
     <div class="container">
         <div class="row">
-            <form action="#" th:action="@{/article/create}" th:object="${articleRequest}" method="post" enctype="multipart/form-data">
+            <form action="#" th:action="@{/article/create}" th:object="${articleResponse}" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">标题</label>
                     <input type="text" class="form-control" id="title" th:field="*{title}">
+                </div>
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{picUrl}">
+                <div class="form-group" th:if="${articleResponse.getPicUrl() != null}">
+                    <label for="pic">题图</label>
+                    <img src="#" th:src="@{'/img/article/pic/'+${articleResponse.getPicUrl()}}" class="img-responsive">
                 </div>
                 <div class="form-group">
                     <label for="pic">题图</label>

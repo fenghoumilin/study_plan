@@ -39,6 +39,16 @@ public class ArticleRequest {
         this.content = content;
     }
 
+    public ArticleRequest() {
+    }
+
+    public ArticleRequest(int uid, int gid, String title, String content) {
+        this.uid = uid;
+        this.gid = gid;
+        this.title = title;
+        this.content = content;
+    }
+
     @Override
     public String toString() {
         return "ArticleRequest{" +
