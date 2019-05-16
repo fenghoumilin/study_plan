@@ -65,6 +65,9 @@
                 <li th:if="${groupFun == 1}">
                     <a href="#" th:href="@{/group/fun/del(gid=${groupInfo.getId()})}">取关</a>
                 </li>
+                <li th:if="${groupFun == 2}">
+                    <a href="#" th:href="@{/group/updateUI(gid=${groupInfo.getId()})}">更新</a>
+                </li>
                 <li th:if="${userInfo.getAvatarPicUrl() == null}">
                     <a href="/user/loginUI">登录</a>
                 </li>

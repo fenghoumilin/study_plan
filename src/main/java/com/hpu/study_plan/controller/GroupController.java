@@ -53,6 +53,39 @@ public class GroupController {
         return getGroupCreateMAV(phoneNumber, 0);
     }
 
+    @RequestMapping(value="/updateUI", method= RequestMethod.GET)
+    public ModelAndView groupUpdateUI(HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+
+        String sessionId = session.getId();
+        String phoneNumber = (String) session.getAttribute(sessionId);
+        int gid = Integer.parseInt(request.getParameter("gid"));
+        UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
+        List<GroupInfo> groupInfoList = groupService.getGroupInfoListById(gid);
+
+        if (groupInfoList.size() == 0 && groupService.isGroupOwner(userInfo.getId(), gid)) {
+            return getGroupCreateMAV(phoneNumber, 1033);
+        } else {
+            return getGroupUpdateMAV(groupInfoList.get(0), userInfo);
+        }
+    }
+
+    private ModelAndView getGroupUpdateMAV(GroupInfo groupInfo, UserInfo userInfo) {
+
+        logger.info("userInfo = " + userInfo.toString());
+        logger.info("创建社区");
+        List<Map<String, Object>> tagList = groupService.getTagList();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("userInfo", userInfo);
+        modelAndView.addObject("groupInfo", groupInfo);
+        modelAndView.addObject("tagList", tagList);
+        modelAndView.addObject("errorModel", new ErrorModel());
+
+        modelAndView.setViewName("group/create");
+        return modelAndView;
+    }
+
     private ModelAndView getGroupCreateMAV(String phoneNumber, int code) {
         UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
         GroupInfo groupInfo = new GroupInfo();
@@ -84,14 +117,29 @@ public class GroupController {
         String sessionId = session.getId();
         String phoneNumber = (String) session.getAttribute(sessionId);
         logger.info("phoneNumber = " + phoneNumber);
-        String uploadUrl = FileUtils.upload(file, GROUP_PIC);
-        if (StringUtils.isEmpty(uploadUrl)) {
-            return getGroupCreateMAV(phoneNumber, 1032);
-        }
+
         try {
-            groupInfo.setPicUrl(uploadUrl);
+            int gid = groupInfo.getId();
+            String uploadUrl = FileUtils.upload(file, GROUP_PIC);
+            if (StringUtils.isEmpty(uploadUrl)) {
+                if (gid <= 0) {
+                    return getGroupCreateMAV(phoneNumber, 1032);
+                }
+            } else {
+                groupInfo.setPicUrl(uploadUrl);
+            }
             UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
-            int gid = groupService.insertGroup(userInfo.getId(), groupInfo.getTitle(), groupInfo.getContent(), groupInfo.getPicUrl(), groupInfo.getTagId());
+
+            if (gid > 0) {
+                if (groupService.isGroupOwner(userInfo.getId(), gid)) {
+                    gid = groupService.updateGroupInfo(gid, groupInfo.getTitle(), groupInfo.getContent(), groupInfo.getPicUrl(), groupInfo.getTagId());
+                } else {
+                    gid = 0;
+                }
+            } else {
+                gid = groupService.insertGroup(userInfo.getId(), groupInfo.getTitle(), groupInfo.getContent(), groupInfo.getPicUrl(), groupInfo.getTagId());
+            }
+
             /*logger.info("userInfo = " + userInfo.toString());
             logger.info("groupInfo = " + groupInfo.toString());
             logger.info("返回社区列表");

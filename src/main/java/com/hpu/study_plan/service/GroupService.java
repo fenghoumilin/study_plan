@@ -51,6 +51,25 @@ public class GroupService {
         return 0;
     }
 
+    public int updateGroupInfo(int gid, String title, String content, String picUrl, int tagId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("gid", gid);
+        parameters.put("title", title);
+        parameters.put("content", content);
+        parameters.put("pic_url", picUrl);
+        parameters.put("tag_id", tagId);
+        try {
+            groupDao.updateGroupInfo(parameters);
+            return gid;
+        } catch (Exception e) {
+            logger.error("insertGroup error | " + parameters, e);
+        }
+
+        return 0;
+    }
+
+
+
     public List<GroupInfo> getGroupInfoListByUid(int uid, int limit) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("uid", uid);
@@ -70,6 +89,18 @@ public class GroupService {
             logger.error("getGroupInfoListById error | uid = " + id, e);
         }
         return new ArrayList<>();
+    }
+
+    public boolean isGroupOwner(int uid, int gid) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("uid", uid);
+        parameters.put("gid", gid);
+        try {
+            return groupDao.isGroupOwner(parameters) == 1;
+        } catch (Exception e) {
+            logger.error("isGroupOwner error ", e);
+        }
+        return false;
     }
 
     public List<Map<String, Object>> getSimpleGroupList(int uid) {

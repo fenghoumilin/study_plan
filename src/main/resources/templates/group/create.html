@@ -67,14 +67,21 @@
     <div class="container">
         <div class="row">
             <form action="#" th:action="@{/group/create}" th:object="${groupInfo}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{picUrl}">
                 <div class="form-group">
                     <label for="title">标题</label>
                     <input type="text" class="form-control" id="title" th:field="*{title}">
                 </div>
+
+                <div class="form-group" th:if="${groupInfo.getPicUrl() != null}">
+                    <label for="pic">题图</label>
+                    <img src="#" th:src="@{'/img/group/pic/'+${groupInfo.getPicUrl()}}" class="img-responsive">
+                </div>
                 <div class="form-group">
                     <label for="pic">题图</label>
                     <input type="file" id="pic" name="pic">
-                    <p class="help-block">请上传jpg或者png题图 且不超过1MB</p>
+                    <p class="help-block">请上传jpg或者png题图 且不超过1MB 注意由于技术问题，上传图片显示</p>
                 </div>
                 <div class="form-group">
                     <!--th:field="*{playerInfo.playerRole}" playerInfo表示球员实体,playerRole球员实体的属性,
