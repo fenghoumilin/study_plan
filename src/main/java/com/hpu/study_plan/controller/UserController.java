@@ -54,17 +54,18 @@ public class UserController {
 
         logger.info("进入登录页面");
         ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("user/login");
+        modelAndView.addObject(new LoginInfo());
+        modelAndView.addObject(new ErrorModel());
         try {
             HttpSession session = request.getSession();
             String sessionId = session.getId();
             String phoneNumber = (String) session.getAttribute(sessionId);
             UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
-            modelAndView.setViewName("user/login");
-            modelAndView.addObject(new LoginInfo());
             modelAndView.addObject(userInfo);
-            modelAndView.addObject(new ErrorModel());
         } catch (Exception e) {
             logger.info("userLoginUI error ", e);
+            modelAndView.addObject(new UserInfo());
         }
 
         return modelAndView;
@@ -88,7 +89,6 @@ public class UserController {
             logger.info("phoneNumber = " + phoneNumber);
             if (PhoneNumberUtils.validatePhoneNumber(phoneNumber)) {
 
-                logger.info("aaaaaa");
                 String key = PHONE_CODE_PREFIX + ":" + phoneNumber;
                 String code;
                 if (redisUtils.exists(key)) {

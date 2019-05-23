@@ -167,7 +167,13 @@ public class GroupController {
         String sessionId = session.getId();
         String phoneNumber = (String) session.getAttribute(sessionId);
         try {
-            int uid = Integer.parseInt(request.getParameter("uid"));
+
+            int uid = 0;
+            try {
+                uid = Integer.parseInt(request.getParameter("uid"));
+            } catch (NumberFormatException e) {
+                logger.info("自我查询");
+            }
 
             ModelAndView modelAndView = new ModelAndView();
 
@@ -175,7 +181,10 @@ public class GroupController {
             UserInfo userInfo = userService.getUserInfoByPhone(phoneNumber);
             if (userInfo == null) {
                 userInfo = new UserInfo();
+            } else {
+                uid = userInfo.getId();
             }
+
             logger.info("userInfo = " + userInfo.toString());
             logger.info("返回社区列表");
             modelAndView.addObject("userInfo", userInfo);

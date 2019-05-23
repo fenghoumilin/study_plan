@@ -71,6 +71,9 @@ public class GroupService {
 
 
     public List<GroupInfo> getGroupInfoListByUid(int uid, int limit) {
+        if (uid <= 0) {
+            return new ArrayList<>();
+        }
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("uid", uid);
         parameters.put("limit", limit);

@@ -47,7 +47,7 @@ public class IndexController {
         }
 
         List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 3);
-        List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 5);
+        List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 6);
         List<ArticleResponse> itemCFArticles = recommendService.getUserItemCFArticles(userInfo.getId(), 3);
 
         modelAndView.addObject("hotGroups", hotGroups);

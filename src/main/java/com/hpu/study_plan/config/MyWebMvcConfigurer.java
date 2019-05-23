@@ -25,8 +25,20 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         List<String> patternList = new ArrayList<>();
         patternList.add("/group/createUI");
         patternList.add("/group/create");
+        patternList.add("/group/updateUI");
+        patternList.add("/group/list");
+        patternList.add("/group/fun");
+        patternList.add("/group/fun/del");
+        patternList.add("/article/createUI");
+        patternList.add("/article/updateUI");
+        patternList.add("/article/create");
+        patternList.add("/article/like");
+        patternList.add("/article/comment");
         patternList.add("/user/setting");
         patternList.add("/user/settingUI");
+        patternList.add("/user/loginOut");
+        patternList.add("/user/settingUI");
+        patternList.add("/user/setting");
 
 
         registry.addInterceptor(loginInterceptor)
