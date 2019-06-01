@@ -61,6 +61,7 @@ public class ArticleService {
         logger.info("insertArticle parameters = " + parameters);
         try {
             articleDao.updateArticle(parameters);
+            elasticSearchDao.save(new ArticleES(aid, title));
             return aid;
         } catch (Exception e) {
             logger.error("insertArticle error parameters = " + parameters, e);
