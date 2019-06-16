@@ -90,7 +90,7 @@
     <select id="getSimpleArticleCreate" resultType="map">
         SELECT uid, id aid FROM article
     </select>
-    <select id="getSimpleArticlesByUid" parameterType="int" resultType="map">
+    <select id="getSimpleArticlesByUid" parameterType="int" resultType="int">
         SELECT id FROM article WHERE uid=#{uid}
     </select>
 

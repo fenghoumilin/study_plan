@@ -90,6 +90,7 @@ public class RecommendService {
                 }
             }
             int cycCount = 0;
+            //每一个tag尽量取一个
             while (cycCount < limit && res.size() < limit) {
                 for (List<GroupInfo> groupInfoList : allGroupInfo) {
                     if (groupInfoList.size() > cycCount) {
@@ -325,13 +326,15 @@ public class RecommendService {
                     return getHotArticles(limit);
                 } else {
                     List<Integer> aidList = new ArrayList<>();
-                    logger.info("aidList = " + aidList.size());
+                    logger.info("value = " + value);
                     String[] aidArray = value.split("_");
                     for (String aid : aidArray) {
                         aidList.add(Integer.parseInt(aid));
                     }
+                    logger.info("aidList = " + aidList);
                     //自己创建的日志不进行推荐
                     Set<Integer> userCreatedArticles = getUserCreatedArticles(uid);
+                    logger.info("userCreatedArticles = " + userCreatedArticles);
                     List<ArticleResponse> articleResponseList = articleDao.getArticleResponseListByIdListOrder(aidList);
 
                     logger.info("articleResponseList  = " + articleResponseList.size());
@@ -359,6 +362,7 @@ public class RecommendService {
     private Set<Integer> getUserCreatedArticles(int uid) {
         try {
             List<Integer> simpleArticles = articleDao.getSimpleArticlesByUid(uid);
+            logger.info("simpleArticles = " + simpleArticles);
             return new HashSet<>(simpleArticles);
 
         } catch (Exception e) {
@@ -435,6 +439,9 @@ public class RecommendService {
             List<SimilarInfo> similarInfos = new ArrayList<>();
             
             for (int aid : allAidList) {
+                if (userInterestSet.contains(aid)) {
+                    continue;
+                }
                 double aidScore = getAidScoreByAidSimilarMap(sortedAidSimilarMap, userInterestSet, aid);
                 if (aidScore > 0) {
                     similarInfos.add(new SimilarInfo(aid, aidScore));

@@ -49,7 +49,7 @@ public class IndexController {
         List<GroupInfo> hotGroups = recommendService.getHotGroups(userInfo.getId(), 3);
         List<ArticleResponse> hotArticles = recommendService.getHotArticles(userInfo.getId(), 6);
         List<ArticleResponse> itemCFArticles = recommendService.getUserItemCFArticles(userInfo.getId(), 3);
-
+        logger.info("itemCFArticles = " + itemCFArticles);
         modelAndView.addObject("hotGroups", hotGroups);
         modelAndView.addObject("hotArticles", hotArticles);
         modelAndView.addObject("itemCFArticles", itemCFArticles);
